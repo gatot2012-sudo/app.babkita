@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BabKita.com App - Satu Bab, Sejuta Cerita</title>
+  <title>BabKita App – Satu Bab, Sejuta Cerita</title>
   <style>
-    :root { --amber:#f59e0b; --amber-dark:#d97706; --amber-light:#fef3c7; --bg:#fdfbf7; --card:#fff; --text:#1e293b; --muted:#64748b; --border:#fde68a; }
+    :root { --amber:#f59e0b; --amber-dark:#d97706; --amber-light:#fef3c7; --bg:#fdfbf7; --text:#1e293b; --muted:#64748b; --border:#fde68a; }
     * { box-sizing:border-box; margin:0; padding:0; }
     body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); padding-bottom:60px; }
     header { position:sticky; top:0; z-index:50; background:#fff; border-bottom:2px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,.04); }
@@ -15,7 +15,6 @@
     .logo span { color:var(--amber-dark); }
     .search-box { flex:1; max-width:400px; }
     .search-box input { width:100%; padding:9px 16px; border-radius:99px; border:1px solid #cbd5e1; background:#f8fafc; font-size:13px; }
-    .btn-group { display:flex; gap:8px; }
     .btn { padding:8px 16px; border-radius:99px; border:none; font-weight:700; font-size:12px; cursor:pointer; }
     .btn-amber { background:var(--amber); color:#000; }
     .btn-dark { background:#0f172a; color:#fcd34d; }
@@ -25,29 +24,27 @@
     .cat-pill { padding:6px 14px; border-radius:99px; border:1px solid var(--border); background:#fff; font-size:12px; font-weight:600; cursor:pointer; }
     .cat-pill.active { background:var(--amber); color:#000; border-color:var(--amber-dark); }
     main { max-width:1140px; margin:auto; padding:20px 16px; }
-    .hero { background:linear-gradient(135deg,#fbbf24,#f59e0b); padding:28px; border-radius:18px; margin-bottom:28px; color:#0f172a; box-shadow:0 4px 15px rgba(245,158,11,.2); }
+    .hero { background:linear-gradient(135deg,#fbbf24,#f59e0b); padding:28px; border-radius:18px; margin-bottom:28px; color:#0f172a; }
     .hero h1 { font-size:24px; margin:8px 0; font-weight:800; }
-    .hero p { font-size:14px; opacity:.9; margin-bottom:16px; }
-    .section-title { font-size:18px; font-weight:800; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+    .section-title { font-size:18px; font-weight:800; margin:24px 0 14px; display:flex; align-items:center; gap:8px; }
     .section-title::before { content:""; width:5px; height:22px; background:var(--amber); border-radius:4px; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:16px; }
-    .card { background:var(--card); border:1px solid #e2e8f0; border-radius:14px; overflow:hidden; cursor:pointer; transition:.2s; display:flex; flex-direction:column; }
-    .card:hover { transform:translateY(-4px); box-shadow:0 10px 20px rgba(0,0,0,.06); border-color:var(--amber); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:16px; }
+    .card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; overflow:hidden; cursor:pointer; transition:.2s; display:flex; flex-direction:column; }
+    .card:hover { transform:translateY(-4px); border-color:var(--amber); box-shadow:0 8px 18px rgba(0,0,0,.06); }
     .card-cover { position:relative; aspect-ratio:2/3; background:#e2e8f0; }
     .card-cover img { width:100%; height:100%; object-fit:cover; }
     .badge-cat { position:absolute; top:8px; left:8px; background:rgba(15,23,42,.85); color:#fcd34d; font-size:10px; font-weight:700; padding:3px 8px; border-radius:6px; }
     .card-body { padding:12px; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
-    .card-title { font-size:14px; font-weight:700; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:6px; }
+    .card-title { font-size:13px; font-weight:700; line-height:1.35; margin-bottom:6px; }
     .card-author { font-size:11px; color:var(--muted); margin-bottom:10px; }
-    .card-stats { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid #f1f5f9; padding-top:8px; font-size:11px; color:var(--muted); text-align:center; }
+    .card-stats { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid #f1f5f9; padding-top:8px; font-size:10px; color:var(--muted); text-align:center; }
     .hidden { display:none !important; }
     .panel { background:#fff; border:1px solid var(--border); border-radius:16px; padding:24px; }
     .detail-head { display:flex; flex-wrap:wrap; gap:24px; }
-    .detail-head img { width:180px; height:260px; object-fit:cover; border-radius:12px; box-shadow:0 6px 16px rgba(0,0,0,.1); }
+    .detail-head img { width:180px; height:260px; object-fit:cover; border-radius:12px; }
     .reader-box { max-width:760px; margin:auto; background:#fffdf9; border:1px solid var(--border); border-radius:16px; padding:32px; line-height:1.85; font-size:17px; }
-    .reader-box p { margin-bottom:16px; }
     .modal { position:fixed; inset:0; background:rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; padding:16px; z-index:100; }
-    .modal-box { background:#fff; border-radius:16px; max-width:480px; width:100%; padding:24px; max-height:90vh; overflow-y:auto; }
+    .modal-box { background:#fff; border-radius:16px; max-width:460px; width:100%; padding:24px; }
     .form-group { margin-bottom:12px; }
     .form-group label { display:block; font-size:12px; font-weight:700; margin-bottom:4px; }
     .form-group input,.form-group textarea,.form-group select { width:100%; padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; }
@@ -57,8 +54,8 @@
   <header>
     <div class="nav-top">
       <div class="logo" onclick="showView('home')"><div class="logo-box">B</div><div>Bab<span>Kita</span></div></div>
-      <div class="search-box"><input type="text" id="searchInput" onkeyup="renderBooks()" placeholder="Cari judul buku atau penulis..." /></div>
-      <div class="btn-group">
+      <div class="search-box"><input type="text" id="searchInput" onkeyup="drawBooks()" placeholder="Cari judul buku atau penulis..." /></div>
+      <div style="display:flex;gap:8px;">
         <button class="btn btn-amber" onclick="openModal('writeModal')">+ Menulis</button>
         <button class="btn btn-dark" id="authBtn" onclick="openModal('authModal')">Masuk / Daftar</button>
       </div>
@@ -69,13 +66,13 @@
   <main>
     <section id="homeView">
       <div class="hero">
-        <span style="background:#0f172a;color:#fcd34d;font-size:11px;padding:4px 10px;border-radius:99px;font-weight:700;">BabKita.com Mobile Web App</span>
+        <span style="background:#0f172a;color:#fcd34d;font-size:11px;padding:4px 10px;border-radius:99px;font-weight:700;">app.babkita.com</span>
         <h1>Satu Bab, Sejuta Cerita</h1>
-        <p>Terhubung langsung dengan koleksi buku BabKita.com. Baca gratis atau mulai terbitkan karyamu!</p>
+        <p style="font-size:14px;margin-bottom:16px;">Baca ribuan buku pilihan atau terbitkan karyamu bab demi bab.</p>
         <button class="btn btn-dark" onclick="openModal('writeModal')">Mulai Menulis Buku</button>
       </div>
-      <div class="section-title" id="shelfTitle">Buku Terbaru dari BabKita.com</div>
-      <div id="statusMsg" style="font-size:13px;color:#b45309;margin-bottom:12px;">Memuat koleksi buku dari babkita.com...</div>
+      <div class="section-title" id="shelfTitle">Buku Terbaru</div>
+      <div id="statusMsg" style="font-size:12px;color:#b45309;margin-bottom:12px;"></div>
       <div class="grid" id="booksGrid"></div>
     </section>
 
@@ -98,23 +95,43 @@
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               <button class="btn btn-amber" onclick="openReader()">Baca Sekarang</button>
               <button class="btn btn-outline" id="subBtn" onclick="toggleSub()">Subscribe</button>
+              <button class="btn btn-dark" onclick="openModal('chapModal')">+ Tambah Bab</button>
             </div>
           </div>
         </div>
       </div>
     </section>
-  </main>
-    <div id="writeModal" class="modal hidden">
-    <div class="modal-box">
-      <div style="display:flex;justify-content:space-between;margin-bottom:14px;">
-        <h3>Terbitkan Buku Baru</h3>
-        <button onclick="closeModal('writeModal')" style="border:none;background:none;font-size:18px;cursor:pointer;">X</button>
+
+    <section id="readerView" class="hidden">
+      <div style="max-width:760px;margin:0 auto 14px;display:flex;justify-content:space-between;">
+        <button class="btn btn-outline" onclick="showView('detail')">Detail Buku</button>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-outline" onclick="resizeFont(-1)">A-</button>
+          <button class="btn btn-outline" onclick="resizeFont(1)">A+</button>
+        </div>
       </div>
+      <article class="reader-box">
+        <div id="rCat" style="font-size:11px;font-weight:700;color:var(--amber-dark);"></div>
+        <h1 id="rTitle" style="font-size:24px;margin:6px 0 20px;"></h1>
+        <div id="rContent"></div>
+      </article>
+      <div class="panel" style="max-width:760px;margin:20px auto 0;">
+        <h3 style="margin-bottom:12px;font-size:16px;">Komentar Pembaca</h3>
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <input type="text" id="commInput" placeholder="Tulis komentar..." style="flex:1;padding:9px 14px;border:1px solid #cbd5e1;border-radius:99px;" />
+          <button class="btn btn-amber" onclick="postComment()">Kirim</button>
+        </div>
+        <div id="commList" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="writeModal" class="modal hidden">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;margin-bottom:14px;"><h3>Terbitkan Buku Baru</h3><button onclick="closeModal('writeModal')" style="border:none;background:none;font-size:18px;cursor:pointer;">X</button></div>
       <form onsubmit="addNewBook(event)">
         <div class="form-group"><label>Judul Buku</label><input type="text" id="nTitle" required /></div>
-        <div class="form-group"><label>Kategori</label>
-          <select id="nCat"><option>Novel Romantis</option><option>Novel Religi</option><option>Novel Sejarah</option><option>Novel Rumtang</option><option>Biografi</option><option>Novel Action</option><option>Novel Horor</option><option>Cerita Anak</option></select>
-        </div>
+        <div class="form-group"><label>Kategori</label><select id="nCat"><option>Novel Romantis</option><option>Novel Religi</option><option>Novel Sejarah</option><option>Novel Rumtang</option><option>Biografi</option><option>Novel Action</option><option>Novel Horor</option><option>Cerita Anak</option></select></div>
         <div class="form-group"><label>Penulis</label><input type="text" id="nAuthor" required /></div>
         <div class="form-group"><label>Isi Cerita (Bab 1)</label><textarea id="nContent" rows="5" required></textarea></div>
         <button type="submit" class="btn btn-amber" style="width:100%;">Terbitkan Sekarang</button>
@@ -122,12 +139,20 @@
     </div>
   </div>
 
+  <div id="chapModal" class="modal hidden">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;margin-bottom:14px;"><h3>Tambah Bab Baru</h3><button onclick="closeModal('chapModal')" style="border:none;background:none;font-size:18px;cursor:pointer;">X</button></div>
+      <form onsubmit="addChapter(event)">
+        <div class="form-group"><label>Judul Bab</label><input type="text" id="cTitle" required /></div>
+        <div class="form-group"><label>Isi Cerita</label><textarea id="cContent" rows="5" required></textarea></div>
+        <button type="submit" class="btn btn-amber" style="width:100%;">Simpan Bab</button>
+      </form>
+    </div>
+  </div>
+
   <div id="authModal" class="modal hidden">
     <div class="modal-box">
-      <div style="display:flex;justify-content:space-between;margin-bottom:14px;">
-        <h3>Masuk / Daftar BabKita</h3>
-        <button onclick="closeModal('authModal')" style="border:none;background:none;font-size:18px;cursor:pointer;">X</button>
-      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:14px;"><h3>Masuk / Daftar BabKita</h3><button onclick="closeModal('authModal')" style="border:none;background:none;font-size:18px;cursor:pointer;">X</button></div>
       <form onsubmit="doLogin(event)">
         <div class="form-group"><label>Nama Penulis / Pembaca</label><input type="text" id="uName" required /></div>
         <div class="form-group"><label>Email</label><input type="email" required /></div>
@@ -135,95 +160,55 @@
       </form>
     </div>
   </div>
-
 <script>
 var cats = ["Semua", "Novel Romantis", "Novel Religi", "Novel Sejarah", "Novel Rumtang", "Biografi", "Novel Action", "Novel Horor", "Cerita Anak"];
-var selCat = "Semua", books = [], curBook = null, fSize = 17, usr = null;
+var selCat = "Semua", curBook = null, fSize = 17, usr = null;
+var books = [
+  { id: 1, title: "Ukas, Mbah Yut, Dan HP yang Bisa Ngomong Sendiri", author: "Ummu Kamilah", category: "Cerita Anak", views: 420, chapters: 2, subs: 45, comments: [], cover: "https://unsplash.com", excerpt: "Kisah Ukas dan Mbah Yut menemukan HP jadul yang bisa berbicara.", content: "<p><b>Bab 1:</b> Sore itu di rumah Mbah Yut, Ukas menemukan ponsel tua di dalam laci kayu...</p>" },
+  { id: 2, title: "Tak Ada Raihan, Gibran Pun Jadi", author: "Gatot Susanto", category: "Novel Romantis", views: 890, chapters: 5, subs: 112, comments: [], cover: "https://unsplash.com", excerpt: "Komedi romantis penuh kejutan dalam mencari cinta sejati.", content: "<p><b>Bab 1:</b> Takdir memang sering datang di waktu yang tak terduga...</p>" },
+  { id: 3, title: "Haji Harjuna - Haji Jual Tanah", author: "Kanal Satu", category: "Novel Religi", views: 615, chapters: 4, subs: 74, comments: [], cover: "https://unsplash.com", excerpt: "Perjuangan penuh hikmah demi menunaikan rukun Islam kelima.", content: "<p><b>Bab 1:</b> Niat suci menuju Tanah Suci tak pernah surut...</p>" },
+  { id: 4, title: "Api di Istana Majapahit", author: "Kanal Satu", category: "Novel Sejarah", views: 730, chapters: 7, subs: 98, comments: [], cover: "https://unsplash.com", excerpt: "Intrik politik dan kesetiaan di masa kejayaan Nusantara.", content: "<p><b>Bab 1:</b> Malam di Trowulan terasa mencekam saat obor dinyalakan...</p>" }
+];
 
 function startApp() {
   document.getElementById("catList").innerHTML = cats.map(function(c) {
     return '<button class="cat-pill ' + (selCat === c ? 'active' : '') + '" onclick="pickCat(\'' + c + '\')">' + c + '</button>';
   }).join("");
-  fetch("https://babkita.com")
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      books = d.map(function(it, i) {
-        return {
-          id: it.id, title: it.title, author: it.author,
-          category: it.category, views: 150 + i * 23, chapters: 1,
-          subs: 12 + i * 3, comments: [], cover: it.cover,
-          excerpt: it.excerpt, content: it.content
-        };
-      });
-      document.getElementById("statusMsg").textContent = "Menampilkan " + books.length + " buku asli dari BabKita.com";
+  drawBooks();
+  fetch("https://babkita.com").then(function(r) { return r.json(); }).then(function(d) {
+    if (d && d.length) {
+      books = d.map(function(it, i) { return { id: it.id, title: it.title, author: it.author, category: it.category, views: 150 + i * 21, chapters: 1, subs: 15 + i * 2, comments: [], cover: it.cover, excerpt: it.excerpt, content: it.content }; });
+      document.getElementById("statusMsg").textContent = "Terhubung BabKita.com (" + books.length + " buku)";
       drawBooks();
-    })
-    .catch(function() {
-      document.getElementById("statusMsg").textContent = "Gagal terhubung ke API BabKita.com.";
-    });
-  startApp();
+    }
+  }).catch(function() {});
 }
-
+function pickCat(c) { selCat = c; document.getElementById("shelfTitle").textContent = c === "Semua" ? "Buku Terbaru" : c; startApp(); }
 function drawBooks() {
   var q = document.getElementById("searchInput").value.toLowerCase();
-  var list = books.filter(function(b) {
-    return (selCat === "Semua" || b.category.toLowerCase().indexOf(selCat.toLowerCase()) !== -1) &&
-           (b.title.toLowerCase().indexOf(q) !== -1 || b.author.toLowerCase().indexOf(q) !== -1);
-  });
+  var list = books.filter(function(b) { return (selCat === "Semua" || b.category.toLowerCase().indexOf(selCat.toLowerCase()) !== -1) && (b.title.toLowerCase().indexOf(q) !== -1 || b.author.toLowerCase().indexOf(q) !== -1); });
   document.getElementById("booksGrid").innerHTML = list.map(function(b) {
     return '<div class="card" onclick="openDetail(' + b.id + ')"><div class="card-cover"><img src="' + b.cover + '" /><span class="badge-cat">' + b.category + '</span></div><div class="card-body"><div><div class="card-title">' + b.title + '</div><div class="card-author">' + b.author + '</div></div><div class="card-stats"><span>Baca ' + b.views + '</span><span>Bab ' + b.chapters + '</span><span>Sub ' + b.subs + '</span><span>Kom ' + b.comments.length + '</span></div></div></div>';
   }).join("");
 }
-
-function showView(v) {
-  ["homeView", "detailView", "readerView"].forEach(function(id) { document.getElementById(id).classList.add("hidden"); });
-  document.getElementById(v + "View").classList.remove("hidden");
-  window.scrollTo(0, 0);
-}
-
+function showView(v) { ["homeView", "detailView", "readerView"].forEach(function(id) { document.getElementById(id).classList.add("hidden"); }); document.getElementById(v + "View").classList.remove("hidden"); window.scrollTo(0, 0); }
 function openDetail(id) {
   curBook = books.find(function(b) { return b.id === id; }); curBook.views++;
-  document.getElementById("dCover").src = curBook.cover;
-  document.getElementById("dCat").textContent = curBook.category;
-  document.getElementById("dTitle").innerHTML = curBook.title;
-  document.getElementById("dAuthor").textContent = curBook.author;
-  document.getElementById("dViews").textContent = curBook.views;
-  document.getElementById("dChaps").textContent = curBook.chapters;
-  document.getElementById("dSubs").textContent = curBook.subs;
-  document.getElementById("dComms").textContent = curBook.comments.length;
-  document.getElementById("dExcerpt").textContent = curBook.excerpt;
+  document.getElementById("dCover").src = curBook.cover; document.getElementById("dCat").textContent = curBook.category; document.getElementById("dTitle").innerHTML = curBook.title; document.getElementById("dAuthor").textContent = curBook.author;
+  document.getElementById("dViews").textContent = curBook.views; document.getElementById("dChaps").textContent = curBook.chapters; document.getElementById("dSubs").textContent = curBook.subs; document.getElementById("dComms").textContent = curBook.comments.length; document.getElementById("dExcerpt").textContent = curBook.excerpt;
   showView("detail");
 }
-
-function openReader() {
-  document.getElementById("rCat").textContent = curBook.category;
-  document.getElementById("rTitle").innerHTML = curBook.title;
-  document.getElementById("rContent").innerHTML = curBook.content;
-  drawComm(); showView("reader");
-}
-
+function openReader() { document.getElementById("rCat").textContent = curBook.category; document.getElementById("rTitle").innerHTML = curBook.title; document.getElementById("rContent").innerHTML = curBook.content; drawComm(); showView("reader"); }
 function resizeFont(d) { fSize = Math.min(24, Math.max(14, fSize + d)); document.getElementById("rContent").style.fontSize = fSize + "px"; }
 function toggleSub() { curBook.subs++; document.getElementById("dSubs").textContent = curBook.subs; document.getElementById("subBtn").textContent = "Disubscribe"; }
-function drawComm() {
-  document.getElementById("commList").innerHTML = curBook.comments.length
-    ? curBook.comments.map(function(c) { return '<div style="background:#fffbeb;padding:10px 14px;border-radius:10px;font-size:13px;"><strong>' + c.user + ':</strong> ' + c.text + '</div>'; }).join("")
-    : '<p style="font-size:12px;color:#64748b;">Belum ada komentar.</p>';
-}
-function postComment() {
-  var i = document.getElementById("commInput"); if (!i.value.trim()) return;
-  curBook.comments.unshift({ user: usr || "Pembaca", text: i.value.trim() });
-  i.value = ""; drawComm();
-}
+function drawComm() { document.getElementById("commList").innerHTML = curBook.comments.length ? curBook.comments.map(function(c) { return '<div style="background:#fffbeb;padding:10px;border-radius:10px;font-size:13px;"><b>' + c.user + ':</b> ' + c.text + '</div>'; }).join("") : '<p style="font-size:12px;color:#64748b;">Belum ada komentar.</p>'; }
+function postComment() { var i = document.getElementById("commInput"); if (!i.value.trim()) return; curBook.comments.unshift({ user: usr || "Pembaca", text: i.value.trim() }); i.value = ""; drawComm(); }
 function openModal(id) { document.getElementById(id).classList.remove("hidden"); }
 function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
 function doLogin(e) { e.preventDefault(); usr = document.getElementById("uName").value; document.getElementById("authBtn").textContent = usr; closeModal("authModal"); }
-function addNewBook(e) {
-  e.preventDefault();
-  books.unshift({ id: Date.now(), title: document.getElementById("nTitle").value, category: document.getElementById("nCat").value, author: document.getElementById("nAuthor").value, views: 1, chapters: 1, subs: 0, comments: [], cover: "https://unsplash.com", excerpt: document.getElementById("nContent").value.slice(0, 120) + "...", content: "<p>" + document.getElementById("nContent").value + "</p>" });
-  e.target.reset(); closeModal("writeModal"); drawBooks();
-}
+function addNewBook(e) { e.preventDefault(); books.unshift({ id: Date.now(), title: document.getElementById("nTitle").value, category: document.getElementById("nCat").value, author: document.getElementById("nAuthor").value, views: 1, chapters: 1, subs: 0, comments: [], cover: "https://unsplash.com", excerpt: document.getElementById("nContent").value.slice(0, 120) + "...", content: "<p>" + document.getElementById("nContent").value + "</p>" }); e.target.reset(); closeModal("writeModal"); drawBooks(); }
+function addChapter(e) { e.preventDefault(); curBook.chapters++; curBook.content += "<hr style='margin:24px 0;border-color:#fde68a;'/><h3>" + document.getElementById("cTitle").value + "</h3><p>" + document.getElementById("cContent").value + "</p>"; e.target.reset(); closeModal("chapModal"); openDetail(curBook.id); }
 startApp();
 </script>
 </body>
 </html>
-
