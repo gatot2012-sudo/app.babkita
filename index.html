@@ -144,33 +144,23 @@ function startApp() {
   document.getElementById("catList").innerHTML = cats.map(function(c) {
     return '<button class="cat-pill ' + (selCat === c ? 'active' : '') + '" onclick="pickCat(\'' + c + '\')">' + c + '</button>';
   }).join("");
-
-  fetch("https://rss2json.com")
+  fetch("https://babkita.com")
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (!d.items || !d.items.length) throw new Error("kosong");
-      books = d.items.map(function(it, i) {
-        var m = it.content.match(/<img[^>]+src="([^">]+)"/);
+      books = d.map(function(it, i) {
         return {
-          id: i + 1, title: it.title, author: it.author || "Penulis BabKita",
-          category: (it.categories && it.categories) ? it.categories : "Buku Terbaru",
-          views: 150 + i * 23, chapters: 1, subs: 12 + i * 3, comments: [],
-          cover: it.thumbnail || (m ? m : "https://unsplash.com"),
-          excerpt: it.description.replace(/<[^>]+>/g, "").slice(0, 140) + "...",
-          content: it.content
+          id: it.id, title: it.title, author: it.author,
+          category: it.category, views: 150 + i * 23, chapters: 1,
+          subs: 12 + i * 3, comments: [], cover: it.cover,
+          excerpt: it.excerpt, content: it.content
         };
       });
-      document.getElementById("statusMsg").textContent = "Menampilkan " + books.length + " buku terbaru dari BabKita.com";
+      document.getElementById("statusMsg").textContent = "Menampilkan " + books.length + " buku asli dari BabKita.com";
       drawBooks();
     })
     .catch(function() {
-      document.getElementById("statusMsg").textContent = "Gagal memuat feed babkita.com.";
+      document.getElementById("statusMsg").textContent = "Gagal terhubung ke API BabKita.com.";
     });
-}
-
-function pickCat(c) {
-  selCat = c;
-  document.getElementById("shelfTitle").textContent = c === "Semua" ? "Buku Terbaru dari BabKita.com" : c;
   startApp();
 }
 
