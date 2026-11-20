@@ -1,9 +1,15 @@
 var cats = ["Semua", "Novel Romantis", "Novel Religi", "Novel Sejarah", "Novel Huntang", "Biografi", "Novel Action", "Novel Horor", "Cerita Anak"];
 var selCat = "Semua", curBook = null, fSize = 17, usr = null;
 
+// ISI LINK GAMBAR COVER MANUAL DI SINI (Berdasarkan ID atau Judul Buku dari WordPress)
+var manualCovers = {
+  1: "https://babkita.com",
+  2: "https://babkita.com"
+};
+
 var books = [
-  { id: 1, title: "Ukas, Mbah Yut, Dan HP yang Bisa Ngomong Sendiri", author: "Ummu Kamilah", category: "Cerita Anak", views: 890, chapters: 1, subs: 42, cover: "", excerpt: "Kisah seru petualangan Ukas dan Mbah Yut bersama ponsel ajaib.", content: "<p>Memuat isi cerita...</p>", comments: [] },
-  { id: 2, title: "Tak Ada Raihan, Gibran Pun Jadi", author: "Gatot Susanto", category: "Novel Romantis", views: 1240, chapters: 1, subs: 85, cover: "", excerpt: "Sebuah kisah cinta penuh kejutan dan takdir yang tak terduga.", content: "<p>Memuat isi cerita...</p>", comments: [] }
+  { id: 1, title: "Ukas, Mbah Yut, Dan HP yang Bisa Ngomong Sendiri", author: "Ummu Kamilah", category: "Cerita Anak", views: 890, chapters: 1, subs: 42, cover: manualCovers[1] || "", excerpt: "Kisah seru petualangan Ukas dan Mbah Yut bersama ponsel ajaib.", content: "<p>Silakan baca selengkapnya di BabKita.com</p>", comments: [] },
+  { id: 2, title: "Tak Ada Raihan, Gibran Pun Jadi", author: "Gatot Susanto", category: "Novel Romantis", views: 1240, chapters: 1, subs: 85, cover: manualCovers[2] || "", excerpt: "Sebuah kisah cinta penuh kejutan dan takdir yang tak terduga.", content: "<p>Silakan baca selengkapnya di BabKita.com</p>", comments: [] }
 ];
 
 function stripHtml(html) {
@@ -12,49 +18,33 @@ function stripHtml(html) {
   return tmp.textContent || tmp.innerText || "";
 }
 
-function getCoverFromItem(it) {
-  if (it.cover) return it.cover;
-  if (it.featured_media_url) return it.featured_media_url;
-  if (it.jetpack_featured_media_url) return it.jetpack_featured_media_url;
-  if (it.acf && it.acf.cover) return it.acf.cover;
-  if (it._embedded && it._embedded["wp:featuredmedia"] && it._embedded["wp:featuredmedia"] && it._embedded["wp:featuredmedia"].source_url) {
-    return it._embedded["wp:featuredmedia"].source_url;
-  }
-  var rawContent = (it.content && it.content.rendered) ? it.content.rendered : (typeof it.content === "string" ? it.content : "");
-  var tmp = document.createElement("div");
-  tmp.innerHTML = rawContent;
-  var img = tmp.querySelector("img");
-  return img ? img.src : "";
-}
-
 function startApp() {
   document.getElementById("catList").innerHTML = cats.map(function(c) {
     return '<button class="cat-pill ' + (selCat === c ? 'active' : '') + '" onclick="pickCat(\'' + c + '\')">' + c + '</button>';
   }).join("");
   drawBooks();
 
+  // Menggunakan URL asli tanpa _embed agar 50 buku terhubung lancar
   fetch("https://babkita.com")
     .then(function(r) { return r.json(); })
     .then(function(d) {
       if (d && d.length) {
         books = d.map(function(it, i) {
           var titleText = (it.title && it.title.rendered) ? it.title.rendered : (it.title || "Tanpa Judul");
-          var contentHtml = (it.content && it.content.rendered) ? it.content.rendered : (typeof it.content === "string" ? it.content : "<p>Belum ada isi cerita.</p>");
+          var contentHtml = (it.content && it.content.rendered) ? it.content.rendered : (typeof it.content === "string" ? it.content : "<p>Buka BabKita.com untuk membaca bab ini.</p>");
           var excerptRaw = (it.excerpt && it.excerpt.rendered) ? it.excerpt.rendered : (it.excerpt || contentHtml);
-          var excerptText = stripHtml(excerptRaw).slice(0, 160) + "...";
-          var authorName = (typeof it.author === "string" && it.author) ? it.author : ((it._embedded && it._embedded.author && it._embedded.author) ? it._embedded.author.name : "Penulis BabKita");
-          var catName = (typeof it.category === "string" && it.category) ? it.category : ((it._embedded && it._embedded["wp:term"] && it._embedded["wp:term"] && it._embedded["wp:term"]) ? it._embedded["wp:term"].name : "Novel Romantis");
+          var coverUrl = manualCovers[it.id] || it.cover || it.featured_media_url || "";
 
           return {
             id: it.id,
             title: titleText,
-            author: authorName,
-            category: catName,
+            author: (typeof it.author === "string" && it.author) ? it.author : "Penulis BabKita",
+            category: (typeof it.category === "string" && it.category) ? it.category : "Novel Romantis",
             views: it.views || (150 + i * 21),
             chapters: it.chapters || 1,
             subs: it.subs || (12 + i * 3),
-            cover: getCoverFromItem(it),
-            excerpt: excerptText,
+            cover: coverUrl,
+            excerpt: stripHtml(excerptRaw).slice(0, 160) + "...",
             content: contentHtml,
             comments: []
           };
@@ -63,7 +53,7 @@ function startApp() {
         drawBooks();
       }
     }).catch(function(err) {
-      console.error(err);
+      document.getElementById("statusMsg").textContent = "Mode Offline (Menampilkan buku pilihan)";
     });
 }
 
@@ -160,54 +150,22 @@ function postComment() {
   drawComs();
 }
 
-function openModal(id) { document.getElementById(id).classList.remove("hidden"); }
-function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
-
-function doLogin(e) {
-  e.preventDefault();
-  usr = document.getElementById("uName").value;
-  document.getElementById("authBtn").textContent = usr;
-  closeModal("authModal");
-}
-
-function addNewBook(e) {
-  e.preventDefault();
-  var fileInput = document.getElementById("nCoverFile");
-  var defaultCover = "";
-  var saveBook = function(imgUrl) {
-    books.unshift({
-      id: Date.now(),
-      title: document.getElementById("nTitle").value,
-      category: document.getElementById("nCat").value,
-      author: document.getElementById("nAuthor").value,
-      views: 1,
-      chapters: 1,
-      subs: 0,
-      comments: [],
-      cover: imgUrl,
-      excerpt: document.getElementById("nContent").value.slice(0, 120) + "...",
-      content: "<p>" + document.getElementById("nContent").value + "</p>"
-    });
-    e.target.reset();
-    closeModal("writeModal");
-    drawBooks();
-  };
-  if (fileInput && fileInput.files && fileInput.files[0]) {
-    var reader = new FileReader();
-    reader.onload = function(ev) { saveBook(ev.target.result); };
-    reader.readAsDataURL(fileInput.files[0]);
-  } else {
-    saveBook(defaultCover);
+// Arahkan tombol Menulis & Login langsung ke WordPress BabKita.com
+function openModal(id) {
+  if (id === "writeModal" || id === "chapModal") {
+    window.open("https://babkita.com", "_blank");
+    return;
   }
+  if (id === "authModal") {
+    window.open("https://babkita.com", "_blank");
+    return;
+  }
+  document.getElementById(id).classList.remove("hidden");
 }
 
-function addChapter(e) {
-  e.preventDefault();
-  curBook.chapters++;
-  curBook.content += "<hr style='margin:24px 0;border-color:#fde68a;'/><h3>" + document.getElementById("cTitle").value + "</h3><p>" + document.getElementById("cContent").value + "</p>";
-  e.target.reset();
-  closeModal("chapModal");
-  openDetail(curBook.id);
-}
+function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
+function doLogin(e) { e.preventDefault(); }
+function addNewBook(e) { e.preventDefault(); }
+function addChapter(e) { e.preventDefault(); }
 
 startApp();
