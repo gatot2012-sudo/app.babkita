@@ -7,7 +7,5 @@ self.addEventListener('activate', function(e) {
 });
 
 self.addEventListener('fetch', function(e) {
-  e.respondWith(fetch(e.request).catch(function() {
-    return new Response('Anda sedang offline. Silakan periksa koneksi internet.');
-  }));
+  e.respondWith(fetch(e.request));
 });
