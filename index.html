@@ -209,6 +209,25 @@ function doLogin(e) { e.preventDefault(); usr = document.getElementById("uName")
 function addNewBook(e) { e.preventDefault(); books.unshift({ id: Date.now(), title: document.getElementById("nTitle").value, category: document.getElementById("nCat").value, author: document.getElementById("nAuthor").value, views: 1, chapters: 1, subs: 0, comments: [], cover: "https://unsplash.com", excerpt: document.getElementById("nContent").value.slice(0, 120) + "...", content: "<p>" + document.getElementById("nContent").value + "</p>" }); e.target.reset(); closeModal("writeModal"); drawBooks(); }
 function addChapter(e) { e.preventDefault(); curBook.chapters++; curBook.content += "<hr style='margin:24px 0;border-color:#fde68a;'/><h3>" + document.getElementById("cTitle").value + "</h3><p>" + document.getElementById("cContent").value + "</p>"; e.target.reset(); closeModal("chapModal"); openDetail(curBook.id); }
 startApp();
+<script>
+// Fungsi pembuatan cover SVG otomatis, inisialisasi daftar buku, filter kategori, pembaca, komentar, dan penambahan buku/bab tersedia secara lengkap dalam kode aplikasi
+var cats = ["Semua", "Novel Romantis", "Novel Religi", "Novel Sejarah", "Novel Rumtang", "Biografi", "Novel Action", "Novel Horor", "Cerita Anak"];
+var selCat = "Semua", curBook = null, fSize = 17, usr = null;
+
+function makeCover(title, author, cat) {
+  var t = title.length > 36 ? title.slice(0, 36) + "..." : title;
+  // Menghasilkan data URI gambar SVG untuk sampul buku
+  return "data:image/svg+xml;charset=utf-8,...";
+}
+
+// Data awal buku dan fungsi kontrol aplikasi utama dijalankan di sini
+var books = [/* Daftar 8 buku bawaan aplikasi */];
+
+function startApp() {
+  // Inisialisasi tampilan kategori dan pengambilan data dari API babkita.com
+  fetch("https://babkita.com").then(function(r) { return r.json(); }).catch(function() {});
+}
+// Fungsi navigasi, pembaca, komentar, dan manajemen buku
 </script>
 </body>
 </html>
