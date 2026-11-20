@@ -1,24 +1,22 @@
 {
-  "id": "/",
+  "id": "/?v=3",
   "name": "BabKita – Satu Bab, Sejuta Cerita",
   "short_name": "BabKita",
-  "description": "Aplikasi resmi membaca dan menulis buku BabKita.com",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#fdfbf7",
   "theme_color": "#f59e0b",
   "icons": [
     {
-      "src": "https://placehold.co",
-      "sizes": "192x192",
+      "src": "icon.png?v=3",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://placehold.co",
-      "sizes": "512x512",
+      "src": "icon.png?v=3",
+      "sizes": "1254x1254",
       "type": "image/png",
       "purpose": "any maskable"
     }
