@@ -329,3 +329,214 @@
     }
   </style>
 </head>
+<body>
+
+  <header>
+    <div class="nav-top">
+      <a href="#" class="brand" onclick="resetFilter()">
+        <img src="https://babkita.com" alt="Logo" width="30" height="30" onerror="this.style.display='none'" />
+        Bab<span>Kita</span>
+      </a>
+      <div class="nav-actions">
+        <a href="https://babkita.com" target="_blank" class="btn btn-primary">+ Menulis</a>
+        <a href="https://babkita.com" target="_blank" class="btn btn-dark">Masuk</a>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input type="text" id="searchInput" class="search-box" placeholder="Cari judul buku atau penulis..." oninput="filterBooks()" />
+      <div class="categories" id="categoryBar">
+        <button class="cat-pill active" onclick="selectCategory('Semua', this)">Semua</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Satu Bab, Sejuta Cerita</h1>
+      <p>Baca koleksi buku pilihan langsung dari BabKita.com atau terbitkan karyamu sendiri.</p>
+      <a href="https://babkita.com" target="_blank" class="btn btn-dark">Mulai Menulis Buku</a>
+    </section>
+
+    <div class="section-header">
+      <h2>Buku Terbaru</h2>
+      <span class="status-text" id="statusText">Memuat buku...</span>
+    </div>
+
+    <div class="book-grid" id="bookGrid"></div>
+  </main>
+
+  <div class="modal" id="readerModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <span id="modalCategory" style="font-size:0.8rem; color:#d97706; font-weight:700;"></span>
+      <h2 id="modalTitle" style="margin: 6px 0;"></h2>
+      <p id="modalAuthor" style="font-size:0.85rem; color:#6b7280; margin-bottom: 16px;"></p>
+      <hr style="border:0; border-top:1px solid #e5e7eb;" />
+      <div class="reader-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://babkita.com";
+    let allBooks = [];
+    let selectedCategory = "Semua";
+
+    function extractCoverImage(post) {
+      if (
+        post._embedded &&
+        post._embedded["wp:featuredmedia"] &&
+        post._embedded["wp:featuredmedia"] &&
+        post._embedded["wp:featuredmedia"].source_url
+      ) {
+        return post._embedded["wp:featuredmedia"].source_url;
+      }
+
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = post.content.rendered || "";
+      const firstImg = tempDiv.querySelector("img");
+      if (firstImg && firstImg.src) {
+        return firstImg.src;
+      }
+
+      return null;
+    }
+
+    function extractCategory(post) {
+      if (
+        post._embedded &&
+        post._embedded["wp:term"] &&
+        post._embedded["wp:term"] &&
+        post._embedded["wp:term"]
+      ) {
+        return post._embedded["wp:term"].name;
+      }
+      return "Umum";
+    }
+
+    function extractAuthor(post) {
+      if (
+        post._embedded &&
+        post._embedded.author &&
+        post._embedded.author
+      ) {
+        return post._embedded.author.name;
+      }
+      return "Penulis BabKita";
+    }
+
+    async function loadBooks() {
+      const statusText = document.getElementById("statusText");
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error("Gagal terhubung ke server");
+
+        const posts = await response.json();
+        allBooks = posts.map((post) => ({
+          id: post.id,
+          title: post.title.rendered,
+          content: post.content.rendered,
+          cover: extractCoverImage(post),
+          category: extractCategory(post),
+          author: extractAuthor(post),
+          link: post.link
+        }));
+
+        statusText.textContent = `Terhubung BabKita.com (${allBooks.length} buku)`;
+        renderCategoryButtons();
+        renderBooks(allBooks);
+      } catch (error) {
+        console.error(error);
+        statusText.textContent = "Gagal memuat buku dari BabKita.com";
+      }
+    }
+
+    function renderCategoryButtons() {
+      const bar = document.getElementById("categoryBar");
+      const uniqueCategories = ["Semua", ...new Set(allBooks.map((b) => b.category))];
+
+      bar.innerHTML = uniqueCategories
+        .map(
+          (cat) => `
+          <button class="cat-pill ${cat === selectedCategory ? "active" : ""}" 
+                  onclick="selectCategory('${cat.replace(/'/g, "\\'")}', this)">
+            ${cat}
+          </button>`
+        )
+        .join("");
+    }
+
+    function selectCategory(category, btnElement) {
+      selectedCategory = category;
+      document.querySelectorAll(".cat-pill").forEach((el) => el.classList.remove("active"));
+      if (btnElement) btnElement.classList.add("active");
+      filterBooks();
+    }
+
+    function resetFilter() {
+      selectedCategory = "Semua";
+      document.getElementById("searchInput").value = "";
+      renderCategoryButtons();
+      renderBooks(allBooks);
+    }
+
+    function filterBooks() {
+      const keyword = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = allBooks.filter((book) => {
+        const matchCat = selectedCategory === "Semua" || book.category === selectedCategory;
+        const matchText =
+          book.title.toLowerCase().includes(keyword) ||
+          book.author.toLowerCase().includes(keyword);
+        return matchCat && matchText;
+      });
+      renderBooks(filtered);
+    }
+
+    function renderBooks(books) {
+      const grid = document.getElementById("bookGrid");
+      if (books.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#6b7280; padding:30px 0;">Tidak ada buku yang cocok.</p>`;
+        return;
+      }
+
+      grid.innerHTML = books
+        .map(
+          (book) => `
+          <article class="book-card" onclick="openBook(${book.id})">
+            <div class="cover-wrapper">
+              <span class="badge-cat">${book.category}</span>
+              ${
+                book.cover
+                  ? `<img src="${book.cover}" alt="${book.title}" loading="lazy" onerror="this.outerHTML='<div class=\\'cover-fallback\\'><strong>${book.title.replace(/'/g, "")}</strong></div>'" />`
+                  : `<div class="cover-fallback"><strong>${book.title}</strong></div>`
+              }
+            </div>
+            <div class="book-info">
+              <h3 class="book-title">${book.title}</h3>
+              <span class="book-author">Oleh ${book.author}</span>
+            </div>
+          </article>
+        `
+        )
+        .join("");
+    }
+
+    function openBook(id) {
+      const book = allBooks.find((b) => b.id === id);
+      if (!book) return;
+
+      document.getElementById("modalCategory").textContent = book.category;
+      document.getElementById("modalTitle").innerHTML = book.title;
+      document.getElementById("modalAuthor").textContent = `Ditulis oleh ${book.author}`;
+      document.getElementById("modalBody").innerHTML = book.content;
+      document.getElementById("readerModal").classList.add("open");
+    }
+
+    function closeModal() {
+      document.getElementById("readerModal").classList.remove("open");
+    }
+
+    loadBooks();
+  </script>
+</body>
+</html>
