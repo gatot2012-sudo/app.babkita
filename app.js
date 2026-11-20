@@ -1,10 +1,10 @@
 var cats = ["Semua", "Novel Romantis", "Novel Religi", "Novel Sejarah", "Novel Huntang", "Biografi", "Novel Action", "Novel Horor", "Cerita Anak"];
 var selCat = "Semua", curBook = null, fSize = 17, usr = null;
 
-// ISI LINK GAMBAR COVER MANUAL DI SINI (Berdasarkan ID atau Judul Buku dari WordPress)
+// ISI LINK GAMBAR COVER MANUAL DI SINI (Sesuai ID Postingan WordPress)
 var manualCovers = {
-  1: "https://babkita.com",
-  2: "https://babkita.com"
+  1: "",
+  2: ""
 };
 
 var books = [
@@ -24,9 +24,11 @@ function startApp() {
   }).join("");
   drawBooks();
 
-  // Menggunakan URL asli tanpa _embed agar 50 buku terhubung lancar
   fetch("https://babkita.com")
-    .then(function(r) { return r.json(); })
+    .then(function(r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
     .then(function(d) {
       if (d && d.length) {
         books = d.map(function(it, i) {
@@ -53,7 +55,7 @@ function startApp() {
         drawBooks();
       }
     }).catch(function(err) {
-      document.getElementById("statusMsg").textContent = "Mode Offline (Menampilkan buku pilihan)";
+      document.getElementById("statusMsg").textContent = "Gagal koneksi API: " + err.message;
     });
 }
 
@@ -150,7 +152,6 @@ function postComment() {
   drawComs();
 }
 
-// Arahkan tombol Menulis & Login langsung ke WordPress BabKita.com
 function openModal(id) {
   if (id === "writeModal" || id === "chapModal") {
     window.open("https://babkita.com", "_blank");
