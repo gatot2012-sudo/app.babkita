@@ -11,166 +11,165 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 pb-20 md:pb-8 select-none md:select-auto">
+<body class="bg-slate-50 text-slate-800 font-sans pb-20 md:pb-10">
 
-  <!-- HEADER -->
+  <!-- HEADER / NAVBAR -->
   <header class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
-      <div onclick="showHome()" class="flex items-center gap-2 cursor-pointer shrink-0">
-        <div class="w-9 h-9 rounded-lg bg-rose-600 text-white flex items-center justify-center font-bold text-lg shadow">
-          <i class="fa-solid fa-book-open"></i>
-        </div>
+      <!-- Logo -->
+      <div onclick="showView('home')" class="flex items-center gap-2 cursor-pointer">
+        <div class="w-9 h-9 rounded-lg bg-red-600 text-white flex items-center justify-center font-bold text-xl shadow">B</div>
         <div>
-          <h1 class="font-extrabold text-lg leading-none text-slate-900">BabKita<span class="text-rose-600">.com</span></h1>
-          <p class="text-[10px] text-slate-500 font-medium">Satu Bab, Sejuta Cerita</p>
+          <span class="font-extrabold text-xl tracking-tight text-slate-900">Bab<span class="text-red-600">Kita</span></span>
+          <span class="hidden sm:block text-[10px] text-slate-500 -mt-1">Satu Bab, Sejuta Cerita</span>
         </div>
       </div>
 
-      <!-- Search Bar -->
-      <div class="flex-1 max-w-md hidden sm:block">
+      <!-- Pencarian -->
+      <div class="flex-1 max-w-md">
         <div class="relative">
-          <input id="searchInput" oninput="filterBooks()" type="text" placeholder="Cari judul buku atau penulis..."
-            class="w-full pl-9 pr-4 py-1.5 text-sm bg-slate-100 border border-transparent focus:border-rose-500 focus:bg-white rounded-full outline-none transition" />
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input type="text" id="searchInput" onkeyup="filterBooks()" placeholder="Cari judul buku atau penulis..."
+            class="w-full pl-9 pr-4 py-2 text-sm bg-slate-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition" />
         </div>
       </div>
 
-      <!-- Action Buttons -->
+      <!-- Tombol Aksi -->
       <div class="flex items-center gap-2">
-        <button onclick="openWriteModal()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-full flex items-center gap-1.5 shadow-sm transition">
+        <button onclick="openWriteModal()" class="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-full flex items-center gap-1.5 shadow-sm transition">
           <i class="fa-solid fa-pen-nib"></i>
-          <span>Menulis</span>
+          <span class="hidden sm:inline">Menulis</span>
         </button>
-        <button id="authBtn" onclick="openAuthModal()" class="border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-full transition">
-          Masuk
+        <button id="authBtn" onclick="toggleAuthModal()" class="border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-full transition">
+          Masuk / Daftar
         </button>
       </div>
     </div>
 
-    <!-- Mobile Search -->
-    <div class="px-4 pb-2.5 sm:hidden">
-      <div class="relative">
-        <input id="searchInputMobile" oninput="filterBooks(true)" type="text" placeholder="Cari judul buku atau penulis..."
-          class="w-full pl-9 pr-4 py-1.5 text-sm bg-slate-100 rounded-full outline-none" />
-        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-      </div>
-    </div>
-
-    <!-- Kategori Bar -->
+    <!-- Navigasi Kategori -->
     <nav class="bg-white border-t border-slate-100">
-      <div id="categoryBar" class="max-w-6xl mx-auto px-4 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar text-xs font-medium">
-        <!-- Diisi otomatis via JS -->
+      <div id="categoryNav" class="max-w-6xl mx-auto px-4 py-2.5 flex items-center gap-2 overflow-x-auto no-scrollbar text-xs font-medium">
+        <!-- Kategori diisi lewat JS -->
       </div>
     </nav>
   </header>
 
-  <!-- MAIN VIEW: BERANDA -->
-  <main id="homeView" class="max-w-6xl mx-auto px-4 pt-5 space-y-8">
-    <!-- Banner Info -->
-    <div class="bg-gradient-to-r from-rose-600 to-amber-600 rounded-2xl p-5 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow">
-      <div>
-        <span class="bg-white/20 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">Aplikasi Web BabKita</span>
-        <h2 class="text-xl sm:text-2xl font-bold mt-1.5">Tulis Ceritamu Bab Demi Bab</h2>
-        <p class="text-xs sm:text-sm text-rose-100 mt-0.5">Baca ribuan karya penulis Indonesia atau terbitkan bukumu sendiri sekarang.</p>
-      </div>
-      <button onclick="openWriteModal()" class="bg-white text-rose-600 font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow hover:bg-rose-50 transition shrink-0">
-        + Terbitkan Buku Baru
-      </button>
-    </div>
+  <!-- KONTEN UTAMA -->
+  <main class="max-w-6xl mx-auto px-4 pt-6">
 
-    <!-- Rak Buku Terbaru -->
-    <section>
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2">
-          <span class="w-1.5 h-5 bg-rose-600 rounded-full"></span>
-          <span id="sectionTitle">Buku Terbaru</span>
-        </h3>
-        <span id="bookCountBadge" class="text-xs text-slate-500"></span>
+    <!-- 1. TAMPILAN BERANDA -->
+    <section id="homeView">
+      <!-- Banner Info -->
+      <div class="bg-gradient-to-r from-red-600 to-rose-700 rounded-2xl p-5 sm:p-7 text-white mb-8 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <span class="bg-white/20 text-xs px-2.5 py-1 rounded-full font-semibold">Aplikasi Resmi BabKita.com</span>
+          <h1 class="text-xl sm:text-2xl font-bold mt-2">Baca & Terbitkan Ceritamu Bab Demi Bab</h1>
+          <p class="text-red-100 text-xs sm:text-sm mt-1">Temukan ribuan novel pilihan atau mulai tulis bukumu sendiri hari ini.</p>
+        </div>
+        <button onclick="openWriteModal()" class="bg-white text-red-600 hover:bg-red-50 font-bold text-xs sm:text-sm px-5 py-2.5 rounded-full shadow shrink-0 transition">
+          + Terbitkan Buku
+        </button>
       </div>
-      <div id="latestBooksGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        <!-- Kartu Buku dirender di sini -->
+
+      <!-- Rak Buku Terbaru -->
+      <div class="mb-10">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="shelfTitle" class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-1.5 h-6 bg-red-600 rounded-full"></span> Buku Terbaru
+          </h2>
+          <span id="bookCount" class="text-xs text-slate-500"></span>
+        </div>
+        <div id="booksGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5">
+          <!-- Kartu Buku diisi lewat JS -->
+        </div>
+      </div>
+
+      <!-- Rak Per Kategori Pilihan -->
+      <div id="categoryShelves" class="space-y-10"></div>
+    </section>
+
+    <!-- 2. TAMPILAN DETAIL BUKU -->
+    <section id="detailView" class="hidden">
+      <button onclick="showView('home')" class="mb-4 text-sm text-slate-600 hover:text-red-600 font-medium flex items-center gap-1.5">
+        <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
+      </button>
+
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-7 shadow-sm">
+        <div class="flex flex-col sm:flex-row gap-6">
+          <img id="detailCover" src="" alt="Cover" class="w-40 sm:w-48 h-60 sm:h-72 object-cover rounded-xl shadow-md mx-auto sm:mx-0" />
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <span id="detailCategory" class="bg-red-50 text-red-600 text-xs font-bold px-3 py-1 rounded-full"></span>
+              <span id="detailStatus" class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full"></span>
+            </div>
+            <h1 id="detailTitle" class="text-2xl sm:text-3xl font-extrabold text-slate-900"></h1>
+            <p class="text-sm text-slate-500 mt-1">Oleh <span id="detailAuthor" class="font-semibold text-slate-800"></span></p>
+
+            <!-- Statistik -->
+            <div class="grid grid-cols-4 gap-2 max-w-md my-4 p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
+              <div>
+                <div class="text-xs text-slate-400"><i class="fa-solid fa-eye text-blue-500"></i> Pembaca</div>
+                <div id="detailViews" class="font-bold text-sm sm:text-base text-slate-800">0</div>
+              </div>
+              <div>
+                <div class="text-xs text-slate-400"><i class="fa-solid fa-book-open text-amber-500"></i> Bab</div>
+                <div id="detailChaptersCount" class="font-bold text-sm sm:text-base text-slate-800">0</div>
+              </div>
+              <div>
+                <div class="text-xs text-slate-400"><i class="fa-solid fa-bell text-red-500"></i> Subscribe</div>
+                <div id="detailSubs" class="font-bold text-sm sm:text-base text-slate-800">0</div>
+              </div>
+              <div>
+                <div class="text-xs text-slate-400"><i class="fa-solid fa-comment text-emerald-500"></i> Komentar</div>
+                <div id="detailCommentsCount" class="font-bold text-sm sm:text-base text-slate-800">0</div>
+              </div>
+            </div>
+
+            <p id="detailSynopsis" class="text-sm text-slate-600 leading-relaxed mb-5"></p>
+
+            <div class="flex flex-wrap gap-3">
+              <button onclick="readChapter(0)" class="bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-6 py-2.5 rounded-full shadow transition">
+                <i class="fa-solid fa-book-open mr-1"></i> Mulai Baca
+              </button>
+              <button id="subBtn" onclick="toggleSubscribe()" class="border border-red-600 text-red-600 hover:bg-red-50 font-semibold text-sm px-5 py-2.5 rounded-full transition">
+                <i class="fa-regular fa-bell mr-1"></i> Subscribe
+              </button>
+              <button onclick="openAddChapterModal()" class="border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-sm px-5 py-2.5 rounded-full transition">
+                + Tambah Bab
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daftar Bab -->
+        <div class="mt-8 pt-6 border-t border-slate-100">
+          <h3 class="font-bold text-base text-slate-900 mb-3">Daftar Bab</h3>
+          <div id="chapterList" class="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden"></div>
+        </div>
       </div>
     </section>
 
-    <!-- Rak Per Kategori Pilihan -->
-    <section id="categorySections" class="space-y-8"></section>
-  </main>
-
-  <!-- DETAIL BUKU VIEW -->
-  <section id="bookDetailView" class="hidden max-w-4xl mx-auto px-4 pt-5">
-    <button onclick="showHome()" class="text-sm text-slate-600 hover:text-rose-600 font-medium mb-4 inline-flex items-center gap-1.5">
-      <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
-    </button>
-    <div id="bookDetailContent" class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm"></div>
-  </section>
-
-  <!-- READER MODE VIEW -->
-  <section id="readerView" class="hidden min-h-screen transition-colors duration-200">
-    <div class="max-w-3xl mx-auto px-4 py-5">
-      <div class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-current/10">
-        <button onclick="backToBookDetail()" class="text-sm font-medium inline-flex items-center gap-1.5 opacity-80 hover:opacity-100">
+    <!-- 3. TAMPILAN RUANG BACA (READER MODE) -->
+    <section id="readerView" class="hidden max-w-3xl mx-auto">
+      <div class="flex items-center justify-between mb-4 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+        <button onclick="showView('detail')" class="text-sm font-medium text-slate-600 hover:text-red-600 flex items-center gap-1.5">
           <i class="fa-solid fa-arrow-left"></i> Daftar Bab
         </button>
-        <!-- Pengaturan Tampilan Baca -->
-        <div class="flex items-center gap-1.5 text-xs">
-          <button onclick="changeFontSize(-1)" class="px-2.5 py-1 rounded border border-current/20 font-bold">A-</button>
-          <button onclick="changeFontSize(1)" class="px-2.5 py-1 rounded border border-current/20 font-bold">A+</button>
-          <button onclick="setReaderTheme('light')" class="w-6 h-6 rounded-full bg-white border border-slate-300" title="Terang"></button>
-          <button onclick="setReaderTheme('sepia')" class="w-6 h-6 rounded-full bg-amber-100 border border-amber-300" title="Sepia"></button>
+        <!-- Pengaturan Tema & Font -->
+        <div class="flex items-center gap-2">
+          <button onclick="changeFontSize(-1)" class="w-8 h-8 rounded-lg border border-slate-200 text-xs font-bold hover:bg-slate-100">A-</button>
+          <button onclick="changeFontSize(1)" class="w-8 h-8 rounded-lg border border-slate-200 text-xs font-bold hover:bg-slate-100">A+</button>
+          <button onclick="setReaderTheme('light')" class="w-6 h-6 rounded-full bg-white border border-slate-400" title="Terang"></button>
+          <button onclick="setReaderTheme('sepia')" class="w-6 h-6 rounded-full bg-amber-100 border border-amber-400" title="Sepia"></button>
           <button onclick="setReaderTheme('dark')" class="w-6 h-6 rounded-full bg-slate-900 border border-slate-600" title="Gelap"></button>
         </div>
       </div>
 
-      <article id="readerArticle" class="py-6 leading-relaxed space-y-4"></article>
+      <article id="readerContainer" class="bg-white text-slate-800 rounded-2xl border border-slate-200 p-6 sm:p-10 shadow-sm transition-colors">
+        <p id="readerBookTitle" class="text-xs font-bold text-red-600 uppercase tracking-wider"></p>
+        <h1 id="readerChapterTitle" class="text-xl sm:text-2xl font-extrabold mt-1 mb-6"></h1>
+        <div id="readerContent" class="leading-relaxed space-y-4 text-base"></div>
+      </article>
 
-      <!-- Navigasi Antar Bab -->
-      <div id="chapterNavButtons" class="flex items-center justify-between pt-4 border-t border-current/10"></div>
-
-      <!-- Komentar Pembaca -->
-      <div class="mt-8 pt-6 border-t border-current/10">
-        <h4 class="font-bold text-base mb-3"><i class="fa-regular fa-comments mr-1"></i> Komentar Pembaca</h4>
-        <div class="flex gap-2 mb-4">
-          <input id="commentInput" type="text" placeholder="Tulis tanggapanmu untuk bab ini..."
-            class="flex-1 px-3.5 py-2 text-sm rounded-xl border border-slate-300 text-slate-800 bg-white outline-none focus:border-rose-500" />
-          <button onclick="addComment()" class="bg-rose-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-rose-700">Kirim</button>
-        </div>
-        <div id="commentList" class="space-y-2.5 text-sm"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MODAL MENULIS / TERBITKAN BUKU & BAB -->
-  <div id="writeModal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 max-h-[90vh] overflow-y-auto space-y-4">
-      <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-bold text-lg text-slate-900">Studio Menulis BabKita</h3>
-        <button onclick="closeModal('writeModal')" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-
-      <div class="flex gap-2 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
-        <button id="tabNewBook" onclick="switchWriteTab('book')" class="flex-1 py-2 rounded-lg bg-white shadow text-rose-600">Buat Buku Baru</button>
-        <button id="tabAddChapter" onclick="switchWriteTab('chapter')" class="flex-1 py-2 rounded-lg text-slate-600">Tambah Bab ke Buku</button>
-      </div>
-
-      <!-- Form Buat Buku Baru -->
-      <form id="formNewBook" onsubmit="submitNewBook(event)" class="space-y-3 text-sm">
-        <div>
-          <label class="font-semibold text-xs text-slate-600">Judul Buku / Novel</label>
-          <input id="newBookTitle" required type="text" placeholder="Contoh: Senja di Pelabuhan Ratu" class="w-full mt-1 px-3 py-2 border rounded-xl outline-none focus:border-rose-500" />
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="font-semibold text-xs text-slate-600">Kategori</label>
-            <select id="newBookCategory" class="w-full mt-1 px-3 py-2 border rounded-xl bg-white outline-none focus:border-rose-500"></select>
-          </div>
-          <div>
-            <label class="font-semibold text-xs text-slate-600">Nama Penulis</label>
-            <input id="newBookAuthor" required type="text" placeholder="Nama pena Anda" class="w-full mt-1 px-3 py-2 border rounded-xl outline-none focus:border-rose-500" />
-          </div>
-        </div>
-        <div>
-          <label class="font-semibold text-xs text-slate-600">Sinopsis Singkat</label>
-          <textarea id="newBookSynopsis" required rows="2" placeholder="Ceritakan garis besar kisah buku ini..." class="w-full mt-1 px-3 py-2 border rounded-xl outline-none focus:border-rose-500"></textarea>
-        </div>
-        <div>
-          <label class="font-semibold text-xs text-slate-600">Judul Bab 1</label>
+      <!-- Navigasi Bab -->
+      <div class="flex items-center justify-between my-6">
