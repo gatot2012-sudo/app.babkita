@@ -23,7 +23,6 @@ function startApp() {
 }
 
 function pickCat(c) { selCat = c; document.getElementById("shelfTitle").textContent = c === "Semua" ? "Buku Terbaru" : c; startApp(); }
-
 function drawBooks() {
   var q = document.getElementById("searchInput").value.toLowerCase();
   var list = books.filter(function(b) {
@@ -31,15 +30,22 @@ function drawBooks() {
            (b.title.toLowerCase().indexOf(q) !== -1 || b.author.toLowerCase().indexOf(q) !== -1);
   });
   document.getElementById("booksGrid").innerHTML = list.map(function(b) {
+    var fallback = "this.style.display='none';this.nextElementSibling.style.display='flex';";
     return '<div class="card" onclick="openDetail(' + b.id + ')">' +
-      '<div class="card-cover"><img src="' + b.cover + '" alt="' + b.title + '" /><span class="badge-cat">' + b.category + '</span></div>' +
+      '<div class="card-cover" style="background:linear-gradient(160deg,#1e293b,#0f172a);position:relative;">' +
+        '<img src="' + b.cover + '" onerror="' + fallback + '" style="width:100%;height:100%;object-fit:cover;" />' +
+        '<div style="display:none;position:absolute;inset:0;padding:16px;flex-direction:column;justify-content:space-between;color:#fef3c7;border-bottom:3px solid #f59e0b;">' +
+          '<div style="margin-top:26px;font-family:Georgia,serif;font-size:15px;font-weight:bold;line-height:1.35;">' + b.title + '</div>' +
+          '<div style="font-size:11px;color:#fcd34d;border-top:1px solid #334155;padding-top:6px;">✍️ ' + b.author + '</div>' +
+        '</div>' +
+        '<span class="badge-cat">' + b.category + '</span>' +
+      '</div>' +
       '<div class="card-body">' +
         '<div><div class="card-title">' + b.title + '</div><div class="card-author">' + b.author + '</div></div>' +
         '<div class="card-stats"><span>Baca ' + b.views + '</span><span>Bab ' + b.chapters + '</span><span>Sub ' + b.subs + '</span><span>Kom ' + b.comments.length + '</span></div>' +
       '</div></div>';
   }).join("");
 }
-
 function showView(v) {
   ["homeView", "detailView", "readerView"].forEach(function(id) { document.getElementById(id).classList.add("hidden"); });
   document.getElementById(v + "View").classList.remove("hidden");
