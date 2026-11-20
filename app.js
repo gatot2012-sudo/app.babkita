@@ -11,7 +11,7 @@ function startApp() {
   }).join("");
   drawBooks();
 
-  fetch("https://babkita.com").then(function(r) { return r.json(); }).then(function(d) {
+ fetch("https://babkita.com/wp-json/wp/v2/bab?status=publish&per_page=100").then(function(r) { return r.json(); }).then(function(d) {
     if (d && d.length) {
       books = d.map(function(it, i) {
         return { id: it.id, title: it.title, author: it.author, category: it.category, views: 150 + i * 21, chapters: 1, subs: 15 + i * 2, comments: [], cover: it.cover, excerpt: it.excerpt, content: it.content };
