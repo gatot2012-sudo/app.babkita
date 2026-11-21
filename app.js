@@ -47,12 +47,29 @@ var embeddedCover =
     ? it._embedded["wp:featuredmedia"][0].source_url
     : "";
 
+var spectraCover =
+  (it.spectra_blocks_featured_image_url &&
+   typeof it.spectra_blocks_featured_image_url === "object")
+    ? it.spectra_blocks_featured_image_url.full
+    : it.spectra_blocks_featured_image_url;
+
+var embeddedCover =
+  it._embedded &&
+  it._embedded["wp:featuredmedia"] &&
+  it._embedded["wp:featuredmedia"][0]
+    ? it._embedded["wp:featuredmedia"][0].source_url
+    : "";
+
 var coverUrl =
   manualCovers[it.id] ||
   spectraCover ||
   embeddedCover ||
   it.cover ||
   it.featured_media_url ||
+  "";
+  spectraCover ||
+  embeddedCover ||
+
   "";
           return {
             id: it.id,
