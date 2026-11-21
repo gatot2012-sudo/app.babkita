@@ -24,11 +24,10 @@ function startApp() {
   }).join("");
   drawBooks();
 
-  fetch("https://babkita.com")
+  fetch("https://babkita.com/wp-admin/admin-ajax.php?action=babkita_get_books")
     .then(function(r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();
-    })
     .then(function(d) {
       if (d && d.length) {
         books = d.map(function(it, i) {
