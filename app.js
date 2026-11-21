@@ -34,8 +34,26 @@ function startApp() {
           var titleText = (it.title && it.title.rendered) ? it.title.rendered : (it.title || "Tanpa Judul");
           var contentHtml = (it.content && it.content.rendered) ? it.content.rendered : (typeof it.content === "string" ? it.content : "<p>Buka BabKita.com untuk membaca bab ini.</p>");
           var excerptRaw = (it.excerpt && it.excerpt.rendered) ? it.excerpt.rendered : (it.excerpt || contentHtml);
-          var coverUrl = manualCovers[it.id] || it.cover || it.featured_media_url || "";
+          var spectraCover =
+  (it.spectra_blocks_featured_image_url &&
+   typeof it.spectra_blocks_featured_image_url === "object")
+    ? it.spectra_blocks_featured_image_url.full
+    : it.spectra_blocks_featured_image_url;
 
+var embeddedCover =
+  it._embedded &&
+  it._embedded["wp:featuredmedia"] &&
+  it._embedded["wp:featuredmedia"][0]
+    ? it._embedded["wp:featuredmedia"][0].source_url
+    : "";
+
+var coverUrl =
+  manualCovers[it.id] ||
+  spectraCover ||
+  embeddedCover ||
+  it.cover ||
+  it.featured_media_url ||
+  "";
           return {
             id: it.id,
             title: titleText,
