@@ -1,7 +1,6 @@
 var firebaseConfig = {
   apiKey: "AIzaSyBi8mrD3OLZ3CM3Xgc6LMSbVs2WWKA6HXg",
   authDomain: "babkita-app" + ".firebaseapp.com",
-
   projectId: "babkita-app",
   storageBucket: "babkita-app.firebasestorage.app",
   messagingSenderId: "2848511454",
@@ -11,7 +10,7 @@ firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
 var cats = ["Semua", "Novel Romantis", "Novel Religi", "Novel Sejarah", "Novel Rumtang", "Biografi", "Novel Action", "Novel Horor", "Cerita Anak"];
-var selCat = "Semua", curBook = null, fSize = 17, usr = localStorage.getItem("babkita_user") || null, books = [];
+var selCat = "Semua", curBook = null, curChapIdx = 0, fSize = 17, usr = localStorage.getItem("babkita_user") || null, books = [];
 
 function updateAuthUI() {
   var btn = document.getElementById("authBtn");
@@ -22,6 +21,11 @@ function renderCategories() {
   document.getElementById("catList").innerHTML = cats.map(function(c) {
     return '<button class="cat-pill ' + (selCat === c ? 'active' : '') + '" onclick="pickCat(\'' + c + '\')">' + c + '</button>';
   }).join("");
+}
+
+function getBookChapters(b) {
+  if (b.chapterList && b.chapterList.length) return b.chapterList;
+  return [{ title: "Bab 1", content: b.content || "<p>Belum ada isi cerita.</p>" }];
 }
 
 function startApp() {
@@ -38,6 +42,10 @@ function startApp() {
     });
     document.getElementById("statusMsg").textContent = books.length ? ("Menampilkan " + books.length + " buku") : "Belum ada buku. Klik + Menulis untuk mulai menerbitkan!";
     drawBooks();
+    if (curBook) {
+      var updated = books.find(function(b) { return b.docId === curBook.docId; });
+      if (updated) { curBook = updated; renderChapterList(); }
+    }
   }, function(err) {
     document.getElementById("statusMsg").textContent = "Error database: " + err.message;
   });
@@ -57,6 +65,7 @@ function drawBooks() {
            ((b.title || "").toLowerCase().indexOf(q) !== -1 || (b.author || "").toLowerCase().indexOf(q) !== -1);
   });
   document.getElementById("booksGrid").innerHTML = list.map(function(b) {
+    var totalBab = b.chapterList ? b.chapterList.length : (b.chapters || 1);
     return '<div class="card" onclick="openDetail(\'' + b.docId + '\')">' +
       '<div class="card-cover" style="background:linear-gradient(160deg,#1e293b,#0f172a);position:relative;">' +
         (b.cover ? '<img src="' + b.cover + '" style="width:100%;height:100%;object-fit:cover;" />' : '<div style="position:absolute;inset:0;padding:10px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;"><div style="margin-top:22px;font-size:12px;font-weight:bold;">' + b.title + '</div><div style="font-size:10px;color:#fcd34d;">' + b.author + '</div></div>') +
@@ -64,15 +73,27 @@ function drawBooks() {
       '</div>' +
       '<div class="card-body">' +
         '<div><div class="card-title">' + b.title + '</div><div class="card-author">' + b.author + '</div></div>' +
-        '<div class="card-stats"><span>Baca ' + (b.views || 0) + '</span><span>Bab ' + (b.chapters || 1) + '</span><span>Sub ' + (b.subs || 0) + '</span><span>Kom ' + (b.comments ? b.comments.length : 0) + '</span></div>' +
+        '<div class="card-stats"><span>Baca ' + (b.views || 0) + '</span><span>Bab ' + totalBab + '</span><span>Sub ' + (b.subs || 0) + '</span><span>Kom ' + (b.comments ? b.comments.length : 0) + '</span></div>' +
       '</div></div>';
   }).join("");
 }
-
 function showView(v) {
   ["homeView", "detailView", "readerView"].forEach(function(id) { document.getElementById(id).classList.add("hidden"); });
   document.getElementById(v + "View").classList.remove("hidden");
   window.scrollTo(0, 0);
+}
+
+function renderChapterList() {
+  var listEl = document.getElementById("chapterList");
+  if (!listEl || !curBook) return;
+  var chaps = getBookChapters(curBook);
+  document.getElementById("dChaps").textContent = chaps.length;
+  listEl.innerHTML = chaps.map(function(ch, idx) {
+    return '<div onclick="openReader(' + idx + ')" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;cursor:pointer;">' +
+      '<span style="font-size:13px;font-weight:700;color:#1e293b;">' + (idx + 1) + '. ' + ch.title + '</span>' +
+      '<span style="font-size:11px;font-weight:700;color:#d97706;">Baca →</span>' +
+    '</div>';
+  }).join("");
 }
 
 function openDetail(docId) {
@@ -86,26 +107,31 @@ function openDetail(docId) {
   document.getElementById("dTitle").textContent = curBook.title;
   document.getElementById("dAuthor").textContent = curBook.author;
   document.getElementById("dViews").textContent = newViews;
-  document.getElementById("dChaps").textContent = curBook.chapters || 1;
   document.getElementById("dSubs").textContent = curBook.subs || 0;
   document.getElementById("dComms").textContent = (curBook.comments || []).length;
   document.getElementById("dExcerpt").textContent = curBook.excerpt || "";
+  renderChapterList();
   showView("detail");
 }
 
-function openReader() {
+function openReader(idx) {
   if (!curBook) return;
-  document.getElementById("rCat").textContent = curBook.category;
-  document.getElementById("rTitle").textContent = curBook.title;
-  document.getElementById("rContent").innerHTML = curBook.content;
+  var chaps = getBookChapters(curBook);
+  curChapIdx = (typeof idx === "number" && idx >= 0 && idx < chaps.length) ? idx : 0;
+  var activeChap = chaps[curChapIdx];
+  document.getElementById("rCat").textContent = curBook.category + " • " + curBook.title;
+  document.getElementById("rTitle").textContent = activeChap.title;
+  document.getElementById("rContent").innerHTML = activeChap.content;
+  var prevBtn = document.getElementById("prevChapBtn");
+  var nextBtn = document.getElementById("nextChapBtn");
+  if (prevBtn) prevBtn.style.visibility = curChapIdx > 0 ? "visible" : "hidden";
+  if (nextBtn) nextBtn.style.visibility = curChapIdx < chaps.length - 1 ? "visible" : "hidden";
   drawComs();
   showView("reader");
 }
 
-function resizeFont(d) {
-  fSize = Math.min(24, Math.max(14, fSize + d));
-  document.getElementById("rContent").style.fontSize = fSize + "px";
-}
+function changeChap(step) { openReader(curChapIdx + step); }
+function resizeFont(d) { fSize = Math.min(24, Math.max(14, fSize + d)); document.getElementById("rContent").style.fontSize = fSize + "px"; }
 
 function toggleSub() {
   if (!curBook) return;
@@ -164,28 +190,44 @@ function compressCover(file, cb) {
   r.readAsDataURL(file);
 }
 
+function formatParagraphs(text) {
+  return text.split("\n").map(function(p) { return p.trim() ? "<p style='margin-bottom:14px;'>" + p + "</p>" : ""; }).join("");
+}
+
 function addNewBook(e) {
   e.preventDefault();
   var btn = e.target.querySelector("button[type='submit']");
   btn.disabled = true; btn.textContent = "Menerbitkan...";
   var title = document.getElementById("nTitle").value.trim(), cat = document.getElementById("nCat").value, author = document.getElementById("nAuthor").value.trim(), rawText = document.getElementById("nContent").value.trim(), fileInput = document.getElementById("nCoverFile");
-  var formatted = "<h3>Bab 1</h3>" + rawText.split("\n").map(function(p) { return p.trim() ? "<p>" + p + "</p>" : ""; }).join("");
+  var bab1Html = formatParagraphs(rawText);
   function save(coverData) {
-    db.collection("books").add({ title: title, author: author, category: cat, views: 1, chapters: 1, subs: 0, cover: coverData || "", excerpt: rawText.slice(0, 160) + "...", content: formatted, comments: [], createdAt: Date.now() })
-      .then(function() { e.target.reset(); closeModal("writeModal"); btn.disabled = false; btn.textContent = "Terbitkan Sekarang"; alert("Buku berhasil diterbitkan!"); })
-      .catch(function(err) { btn.disabled = false; btn.textContent = "Terbitkan Sekarang"; alert("Gagal: " + err.message); });
+    db.collection("books").add({
+      title: title, author: author, category: cat, views: 1, chapters: 1, subs: 0,
+      cover: coverData || "", excerpt: rawText.slice(0, 180) + "...", content: bab1Html,
+      chapterList: [{ title: "Bab 1", content: bab1Html }], comments: [], createdAt: Date.now()
+    })
+    .then(function() { e.target.reset(); closeModal("writeModal"); btn.disabled = false; btn.textContent = "Terbitkan Sekarang"; alert("Buku berhasil diterbitkan!"); })
+    .catch(function(err) { btn.disabled = false; btn.textContent = "Terbitkan Sekarang"; alert("Gagal: " + err.message); });
   }
-  if (fileInput && fileInput.files && fileInput.files[0]) { compressCover(fileInput.files[0], save); } else { save(""); }
+  var pickedFile = (fileInput && fileInput.files && fileInput.files.length) ? fileInput.files.item(0) : null;
+  if (pickedFile) { compressCover(pickedFile, save); } else { save(""); }
 }
 
 function addChapter(e) {
   e.preventDefault();
   if (!curBook) return;
+  var btn = e.target.querySelector("button[type='submit']");
+  btn.disabled = true; btn.textContent = "Menyimpan...";
   var cTitle = document.getElementById("cTitle").value.trim(), cContent = document.getElementById("cContent").value.trim();
-  var newChap = "<hr style='margin:24px 0;border:0;border-top:1px solid #fde68a;'/><h3>" + cTitle + "</h3>" + cContent.split("\n").map(function(p) { return p.trim() ? "<p>" + p + "</p>" : ""; }).join("");
-  var updatedContent = curBook.content + newChap, updatedChaps = (curBook.chapters || 1) + 1;
-  db.collection("books").doc(curBook.docId).update({ content: updatedContent, chapters: updatedChaps }).then(function() {
-    document.getElementById("dChaps").textContent = updatedChaps; e.target.reset(); closeModal("chapModal"); alert("Bab baru berhasil ditambahkan!");
+  var currentChaps = getBookChapters(curBook).slice();
+  currentChaps.push({ title: cTitle, content: formatParagraphs(cContent) });
+  db.collection("books").doc(curBook.docId).update({
+    chapterList: currentChaps, chapters: currentChaps.length
+  }).then(function() {
+    e.target.reset(); closeModal("chapModal"); btn.disabled = false; btn.textContent = "Simpan Bab";
+    alert("Bab baru berhasil ditambahkan ke Daftar Bab!");
+  }).catch(function(err) {
+    btn.disabled = false; btn.textContent = "Simpan Bab"; alert("Gagal menyimpan bab: " + err.message);
   });
 }
 
