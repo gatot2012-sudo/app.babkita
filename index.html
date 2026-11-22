@@ -149,8 +149,25 @@
       <div style="display:flex;justify-content:space-between;margin-bottom:14px;"><h3>Terbitkan Buku Baru</h3><button onclick="closeModal('writeModal')" style="border:none;background:none;font-size:18px;cursor:pointer;">X</button></div>
       <form onsubmit="addNewBook(event)">
         <div class="form-group"><label>Judul Buku</label><input type="text" id="nTitle" required /></div>
-        <div class="form-group"><label>Kategori</label><select id="nCat"><option>Novel Romantis</option><option>Novel Religi</option><option>Novel Sejarah</option><option>Novel Rumtang</option><option>Biografi</option><option>Novel Action</option><option>Novel Horor</option><option>Cerita Anak</option></select></div>
-        <div class="form-group"><label>Penulis</label><input type="text" id="nAuthor" required /></div>
+                <div class="form-group"><label>Kategori</label>
+          <select id="nCat">
+            <option>Novel Romantis</option>
+            <option>Novel Religi</option>
+            <option>Novel Sejarah</option>
+            <option>Novel Rumtang</option>
+            <option>Novel Remaja</option>
+            <option>Novel Fantasi</option>
+            <option>Novel Action</option>
+            <option>Novel Horor</option>
+            <option>Cerita Anak</option>
+            <option>Biografi</option>
+            <option>Inspirasi</option>
+            <option>Non-Fiksi</option>
+            <option>Berita</option>
+            <option>Pengumuman</option>
+          </select>
+        </div>
+  <div class="form-group"><label>Penulis</label><input type="text" id="nAuthor" required /></div>
         <div class="form-group"><label>Foto Cover Buku (Opsional)</label><input type="file" id="nCoverFile" accept="image/*" /></div>
         <div class="form-group"><label>Isi Cerita (Bab 1)</label><textarea id="nContent" rows="5" required></textarea></div>
         <button type="submit" class="btn btn-amber" style="width:100%;">Terbitkan Sekarang</button>
