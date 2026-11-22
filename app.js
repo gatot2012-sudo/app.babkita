@@ -1,6 +1,7 @@
 var firebaseConfig = {
   apiKey: "AIzaSyBi8mrD3OLZ3CM3Xgc6LMSbVs2WWKA6HXg",
-  authDomain: "://firebaseapp.com",
+  authDomain: "babkita-app" + ".firebaseapp.com",
+
   projectId: "babkita-app",
   storageBucket: "babkita-app.firebasestorage.app",
   messagingSenderId: "2848511454",
