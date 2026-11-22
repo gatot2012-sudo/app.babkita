@@ -103,13 +103,18 @@
             </div>
             <p id="dExcerpt" style="font-size:14px;color:#475569;line-height:1.6;margin-bottom:18px;"></p>
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <button class="btn btn-amber" onclick="openReader()">Baca Sekarang</button>
+              <button class="btn btn-amber" onclick="openReader(0)">Baca Bab 1</button>
               <button class="btn btn-outline" id="subBtn" onclick="toggleSub()">Subscribe</button>
               <button class="btn btn-dark" onclick="openModal('chapModal')">+ Tambah Bab</button>
             </div>
           </div>
         </div>
+        <div style="margin-top:24px;border-top:1px solid var(--border);padding-top:18px;">
+          <h3 style="font-size:16px;margin-bottom:12px;">Daftar Bab</h3>
+          <div id="chapterList" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
       </div>
+    </section>
     </section>
 
     <section id="readerView" class="hidden">
