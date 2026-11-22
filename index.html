@@ -75,13 +75,60 @@
 
   <main>
     <section id="homeView">
-      <div class="hero">
-        <span style="background:#0f172a;color:#fcd34d;font-size:11px;padding:4px 10px;border-radius:99px;font-weight:700;">app.babkita.com</span>
-        <h1>Satu Bab, Sejuta Cerita</h1>
-        <p style="font-size:14px;margin-bottom:16px;">Baca ribuan buku pilihan atau terbitkan karyamu bab demi bab.</p>
-        <button class="btn btn-dark" onclick="openModal('writeModal')">Mulai Menulis Buku</button>
+          <div class="banner-wrap">
+        <div class="banner-carousel" id="bannerCarousel">
+          <!-- Banner 1: Utama -->
+          <div class="banner-slide" onclick="openModal('writeModal')" style="background:linear-gradient(135deg,#fbbf24,#d97706);color:#0f172a;">
+            <div>
+              <span class="banner-badge" style="background:#0f172a;color:#fcd34d;">app.babkita.com</span>
+              <h2>Satu Bab, Sejuta Cerita</h2>
+              <p>Baca ribuan buku pilihan atau terbitkan karyamu bab demi bab sekarang.</p>
+            </div>
+            <button class="btn btn-dark" style="align-self:flex-start;">Mulai Menulis Buku</button>
+          </div>
+
+          <!-- Banner 2: Pengumuman -->
+          <div class="banner-slide" onclick="pickCat('Pengumuman')" style="background:linear-gradient(135deg,#1e293b,#0f172a);">
+            <div>
+              <span class="banner-badge" style="background:#f59e0b;color:#000;">Info & Event</span>
+              <h2>Pengumuman Redaksi</h2>
+              <p>Cek informasi terbaru, panduan menulis, dan kabar kompetisi di BabKita.</p>
+            </div>
+            <button class="btn btn-amber" style="align-self:flex-start;">Lihat Pengumuman →</button>
+          </div>
+
+          <!-- Banner 3: Novel Romantis -->
+          <div class="banner-slide" onclick="pickCat('Novel Romantis')" style="background:linear-gradient(135deg,#be123c,#881337);">
+            <div>
+              <span class="banner-badge" style="background:rgba(255,255,255,.2);color:#fff;">Populer</span>
+              <h2>Kisah Romantis Pilihan</h2>
+              <p>Deretan cerita cinta dan drama paling menyentuh hati pembaca pekan ini.</p>
+            </div>
+            <button class="btn" style="align-self:flex-start;background:#fff;color:#881337;">Baca Novel Romantis →</button>
+          </div>
+
+          <!-- Banner 4: Inspirasi & Non-Fiksi -->
+          <div class="banner-slide" onclick="pickCat('Inspirasi')" style="background:linear-gradient(135deg,#047857,#064e3b);">
+            <div>
+              <span class="banner-badge" style="background:rgba(255,255,255,.2);color:#fff;">Wawasan</span>
+              <h2>Bacaan Inspirasi & Gagasan</h2>
+              <p>Temukan tulisan reflektif, kisah nyata, dan pemikiran segar dari para penulis.</p>
+            </div>
+            <button class="btn" style="align-self:flex-start;background:#fff;color:#064e3b;">Jelajahi Inspirasi →</button>
+          </div>
+
+          <!-- Banner 5: Novel Fantasi -->
+          <div class="banner-slide" onclick="pickCat('Novel Fantasi')" style="background:linear-gradient(135deg,#6d28d9,#4c1d95);">
+            <div>
+              <span class="banner-badge" style="background:rgba(255,255,255,.2);color:#fff;">Imajinasi</span>
+              <h2>Petualangan Dunia Fantasi</h2>
+              <p>Masuki semesta penuh misteri, keajaiban, dan kisah seru tanpa batas.</p>
+            </div>
+            <button class="btn" style="align-self:flex-start;background:#fff;color:#4c1d95;">Buka Rak Fantasi →</button>
+          </div>
+        </div>
       </div>
-      <div class="section-title" id="shelfTitle">Buku Terbaru</div>
+<div class="section-title" id="shelfTitle">Buku Terbaru</div>
       <div id="statusMsg" style="font-size:12px;color:#b45309;margin-bottom:12px;"></div>
       <div class="grid" id="booksGrid"></div>
 <div id="categoryShelves"></div>
