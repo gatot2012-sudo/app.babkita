@@ -10,7 +10,24 @@ firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 var auth = firebase.auth();
 
-var cats = ["Semua", "Novel Romantis", "Novel Religi", "Novel Sejarah", "Novel Rumtang", "Biografi", "Novel Action", "Novel Horor", "Cerita Anak"];
+var cats = [
+  "Semua",
+  "Novel Romantis",
+  "Novel Religi",
+  "Novel Sejarah",
+  "Novel Rumtang",
+  "Novel Remaja",
+  "Novel Fantasi",
+  "Novel Action",
+  "Novel Horor",
+  "Cerita Anak",
+  "Biografi",
+  "Inspirasi",
+  "Non-Fiksi",
+  "Berita",
+  "Pengumuman"
+];
+
 var selCat = "Semua", curBook = null, curChapIdx = 0, fSize = 17, currentUser = null, books = [];
 
 auth.onAuthStateChanged(function(user) {
@@ -93,14 +110,59 @@ function startApp() {
     document.getElementById("statusMsg").textContent = "Error database: " + err.message;
   });
 }
-
 function pickCat(c) {
   selCat = c;
-  document.getElementById("shelfTitle").textContent = c === "Semua" ? "Buku Terbaru" : c;
+  var titleEl = document.getElementById("shelfTitle");
+  if (c === "Semua") {
+    titleEl.innerHTML = "Buku Terbaru";
+  } else {
+    titleEl.innerHTML = c + ' <button onclick="pickCat(\'Semua\')" style="margin-left:auto;font-size:11px;padding:4px 10px;border-radius:99px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;">← Semua Kategori</button>';
+  }
   renderCategories();
   drawBooks();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function drawBooks() {
+  var q = document.getElementById("searchInput").value.toLowerCase();
+  var gridEl = document.getElementById("booksGrid");
+  var list = books.filter(function(b) {
+    return (selCat === "Semua" || (b.category || "").toLowerCase() === selCat.toLowerCase()) &&
+           ((b.title || "").toLowerCase().indexOf(q) !== -1 || (b.author || "").toLowerCase().indexOf(q) !== -1);
+  });
+
+  // Jika sedang membuka halaman kategori tertentu dan belum ada isinya
+  if (selCat !== "Semua" && !list.length) {
+    gridEl.innerHTML = '<p style="font-size:13px;color:#64748b;padding:16px 0;">Belum ada tulisan di kategori <strong>' + selCat + '</strong>. Jadilah yang pertama menulis!</p>';
+  } else {
+    gridEl.innerHTML = list.map(buildBookCard).join("");
+  }
+
+  // Tampilkan semua blok rak kategori di beranda (dapat diklik ke halaman masing-masing)
+  var catShelvesEl = document.getElementById("categoryShelves");
+  if (catShelvesEl) {
+    if (selCat === "Semua" && !q) {
+      var semuaKategori = cats.slice(1); // Semua kategori selain "Semua"
+      catShelvesEl.innerHTML = semuaKategori.map(function(kat) {
+        var bukuKategori = books.filter(function(b) {
+          return (b.category || "").toLowerCase() === kat.toLowerCase();
+        });
+
+        var isiRak = bukuKategori.length
+          ? bukuKategori.map(buildBookCard).join("")
+          : '<p style="font-size:12px;color:#64748b;padding:8px 0;">Belum ada tulisan di kategori ' + kat + '.</p>';
+
+        return '<div class="section-title" onclick="pickCat(\'' + kat + '\')" style="cursor:pointer;justify-content:space-between;">' +
+                 '<span>' + kat + '</span>' +
+                 '<span style="font-size:12px;color:#d97706;font-weight:700;">Lihat Semua (' + bukuKategori.length + ') →</span>' +
+               '</div>' +
+               '<div class="grid">' + isiRak + '</div>';
+      }).join("");
+    } else {
+      catShelvesEl.innerHTML = "";
+    }
+  }
+}
 function buildBookCard(b) {
   var totalBab = b.chapterList ? b.chapterList.length : (b.chapters || 1);
   return '<div class="card" onclick="openDetail(\'' + b.docId + '\')">' +
