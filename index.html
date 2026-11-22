@@ -26,13 +26,19 @@
     main { max-width:1140px; margin:auto; padding:20px 16px; }
     .hero { background:linear-gradient(135deg,#fbbf24,#f59e0b); padding:28px; border-radius:18px; margin-bottom:28px; color:#0f172a; }
     .hero h1 { font-size:24px; margin:8px 0; font-weight:800; }
-    .section-title { font-size:18px; font-weight:800; margin:24px 0 14px; display:flex; align-items:center; gap:8px; }
+    .banner-wrap { position:relative; margin-bottom:24px; }
+.banner-carousel { display:flex; overflow-x:auto; gap:14px; scroll-snap-type:x mandatory; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; padding-bottom:6px; }
+.banner-carousel::-webkit-scrollbar { display:none; }
+.banner-slide { flex:0 0 88%; max-width:520px; scroll-snap-align:start; border-radius:16px; overflow:hidden; aspect-ratio:12/5; cursor:pointer; transition:transform .2s; box-shadow:0 6px 16px rgba(0,0,0,.08); background:#1e293b; }
+.banner-slide:hover { transform:translateY(-3px); }
+.banner-slide img { width:100%; height:100%; object-fit:cover; display:block; }
+@media (min-width: 768px) { .banner-slide { flex:0 0 48%; } }
+.section-title { font-size:18px; font-weight:800; margin:24px 0 14px; display:flex; align-items:center; gap:8px; }
     .section-title::before { content:""; width:5px; height:22px; background:var(--amber); border-radius:4px; }
    .grid { display:flex; overflow-x:auto; gap:10px; padding-bottom:10px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
 .grid::-webkit-scrollbar { display:none; }
 .grid .card { flex:0 0 112px; width:112px; scroll-snap-align:start; }
-
-    .card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; overflow:hidden; cursor:pointer; transition:.2s; display:flex; flex-direction:column; }
+.card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; overflow:hidden; cursor:pointer; transition:.2s; display:flex; flex-direction:column; }
     .card:hover { transform:translateY(-4px); border-color:var(--amber); box-shadow:0 8px 18px rgba(0,0,0,.06); }
     .card-cover { position:relative; aspect-ratio:2/3; background:#e2e8f0; }
     .card-cover img { width:100%; height:100%; object-fit:cover; }
@@ -72,63 +78,28 @@
     </div>
     <div class="cat-bar"><div class="cat-inner" id="catList"></div></div>
   </header>
-
   <main>
     <section id="homeView">
-          <div class="banner-wrap">
+            <div class="banner-wrap">
         <div class="banner-carousel" id="bannerCarousel">
-          <!-- Banner 1: Utama -->
-          <div class="banner-slide" onclick="openModal('writeModal')" style="background:linear-gradient(135deg,#fbbf24,#d97706);color:#0f172a;">
-            <div>
-              <span class="banner-badge" style="background:#0f172a;color:#fcd34d;">app.babkita.com</span>
-              <h2>Satu Bab, Sejuta Cerita</h2>
-              <p>Baca ribuan buku pilihan atau terbitkan karyamu bab demi bab sekarang.</p>
-            </div>
-            <button class="btn btn-dark" style="align-self:flex-start;">Mulai Menulis Buku</button>
+          <div class="banner-slide" onclick="pickCat('Semua')">
+            <img src="banner1.jpg" alt="Banner 1 BabKita" />
           </div>
-
-          <!-- Banner 2: Pengumuman -->
-          <div class="banner-slide" onclick="pickCat('Pengumuman')" style="background:linear-gradient(135deg,#1e293b,#0f172a);">
-            <div>
-              <span class="banner-badge" style="background:#f59e0b;color:#000;">Info & Event</span>
-              <h2>Pengumuman Redaksi</h2>
-              <p>Cek informasi terbaru, panduan menulis, dan kabar kompetisi di BabKita.</p>
-            </div>
-            <button class="btn btn-amber" style="align-self:flex-start;">Lihat Pengumuman →</button>
+          <div class="banner-slide" onclick="openModal('writeModal')">
+            <img src="banner2.jpg" alt="Banner 2 BabKita" />
           </div>
-
-          <!-- Banner 3: Novel Romantis -->
-          <div class="banner-slide" onclick="pickCat('Novel Romantis')" style="background:linear-gradient(135deg,#be123c,#881337);">
-            <div>
-              <span class="banner-badge" style="background:rgba(255,255,255,.2);color:#fff;">Populer</span>
-              <h2>Kisah Romantis Pilihan</h2>
-              <p>Deretan cerita cinta dan drama paling menyentuh hati pembaca pekan ini.</p>
-            </div>
-            <button class="btn" style="align-self:flex-start;background:#fff;color:#881337;">Baca Novel Romantis →</button>
+          <div class="banner-slide" onclick="pickCat('Novel Romantis')">
+            <img src="banner3.jpg" alt="Banner 3 BabKita" />
           </div>
-
-          <!-- Banner 4: Inspirasi & Non-Fiksi -->
-          <div class="banner-slide" onclick="pickCat('Inspirasi')" style="background:linear-gradient(135deg,#047857,#064e3b);">
-            <div>
-              <span class="banner-badge" style="background:rgba(255,255,255,.2);color:#fff;">Wawasan</span>
-              <h2>Bacaan Inspirasi & Gagasan</h2>
-              <p>Temukan tulisan reflektif, kisah nyata, dan pemikiran segar dari para penulis.</p>
-            </div>
-            <button class="btn" style="align-self:flex-start;background:#fff;color:#064e3b;">Jelajahi Inspirasi →</button>
+          <div class="banner-slide" onclick="pickCat('Pengumuman')">
+            <img src="banner4.jpg" alt="Banner 4 BabKita" />
           </div>
-
-          <!-- Banner 5: Novel Fantasi -->
-          <div class="banner-slide" onclick="pickCat('Novel Fantasi')" style="background:linear-gradient(135deg,#6d28d9,#4c1d95);">
-            <div>
-              <span class="banner-badge" style="background:rgba(255,255,255,.2);color:#fff;">Imajinasi</span>
-              <h2>Petualangan Dunia Fantasi</h2>
-              <p>Masuki semesta penuh misteri, keajaiban, dan kisah seru tanpa batas.</p>
-            </div>
-            <button class="btn" style="align-self:flex-start;background:#fff;color:#4c1d95;">Buka Rak Fantasi →</button>
+          <div class="banner-slide" onclick="pickCat('Novel Fantasi')">
+            <img src="banner5.jpg" alt="Banner 5 BabKita" />
           </div>
         </div>
       </div>
-<div class="section-title" id="shelfTitle">Buku Terbaru</div>
+    <div class="section-title" id="shelfTitle">Buku Terbaru</div>
       <div id="statusMsg" style="font-size:12px;color:#b45309;margin-bottom:12px;"></div>
       <div class="grid" id="booksGrid"></div>
 <div id="categoryShelves"></div>
