@@ -104,7 +104,7 @@ function openDetail(id) {
   document.getElementById("dViews").textContent = curBook.views;
   document.getElementById("dChaps").textContent = curBook.chapters;
   document.getElementById("dSubs").textContent = curBook.subs;
-  document.getElementById("dComs").textContent = curBook.comments.length;
+  document.getElementById("dComms").textContent = curBook.comments.length;
   document.getElementById("dExcerpt").textContent = curBook.excerpt;
   showView("detail");
 }
