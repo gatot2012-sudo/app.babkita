@@ -116,7 +116,6 @@
       </div>
     </section>
     </section>
-
     <section id="readerView" class="hidden">
       <div style="max-width:760px;margin:0 auto 14px;display:flex;justify-content:space-between;">
         <button class="btn btn-outline" onclick="showView('detail')">Detail Buku</button>
@@ -129,6 +128,10 @@
         <div id="rCat" style="font-size:11px;font-weight:700;color:var(--amber-dark);"></div>
         <h1 id="rTitle" style="font-size:24px;margin:6px 0 20px;"></h1>
         <div id="rContent"></div>
+<div style="display:flex;justify-content:space-between;margin-top:28px;padding-top:16px;border-top:1px solid var(--border);">
+       <button class="btn btn-outline" id="prevChapBtn" onclick="changeChap(-1)">← Bab Sebelumnya</button>
+       <button class="btn btn-amber" id="nextChapBtn" onclick="changeChap(1)">Bab Selanjutnya →</button>
+     </div>
       </article>
       <div class="panel" style="max-width:760px;margin:20px auto 0;">
         <h3 style="margin-bottom:12px;font-size:16px;">Komentar Pembaca</h3>
