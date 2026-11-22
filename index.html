@@ -84,8 +84,8 @@
       <div class="section-title" id="shelfTitle">Buku Terbaru</div>
       <div id="statusMsg" style="font-size:12px;color:#b45309;margin-bottom:12px;"></div>
       <div class="grid" id="booksGrid"></div>
+<div id="categoryShelves"></div>
     </section>
-
     <section id="detailView" class="hidden">
       <button class="btn btn-outline" style="margin-bottom:16px;" onclick="showView('home')">Kembali ke Beranda</button>
       <div class="panel">
@@ -168,15 +168,25 @@
       </form>
     </div>
   </div>
-
   <div id="authModal" class="modal hidden">
-    <div class="modal-box">
-      <div style="display:flex;justify-content:space-between;margin-bottom:14px;"><h3>Masuk / Daftar BabKita</h3><button onclick="closeModal('authModal')" style="border:none;background:none;font-size:18px;cursor:pointer;">X</button></div>
-      <form onsubmit="doLogin(event)">
-        <div class="form-group"><label>Nama Penulis / Pembaca</label><input type="text" id="uName" required /></div>
-        <div class="form-group"><label>Email</label><input type="email" required /></div>
-        <button type="submit" class="btn btn-dark" style="width:100%;">Masuk</button>
-      </form>
+    <div class="modal-box" style="text-align:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h3 id="authModalTitle">Masuk ke BabKita</h3>
+        <button onclick="closeModal('authModal')" style="border:none;background:none;font-size:18px;cursor:pointer;">X</button>
+      </div>
+      <div id="loggedOutBox">
+        <p style="font-size:13px;color:#475569;margin-bottom:18px;line-height:1.5;">
+          Gunakan akun Google Anda untuk masuk, menulis buku, dan menambahkan bab baru secara terverifikasi.
+        </p>
+        <button type="button" onclick="loginWithGoogle()" class="btn" style="width:100%;padding:12px;background:#fff;color:#1e293b;border:1px solid #cbd5e1;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;">
+          <img src="https://gstatic.com" width="18" height="18" alt="Google" />
+          Masuk dengan Google
+        </button>
+      </div>
+      <div id="loggedInBox" class="hidden">
+        <p id="userEmailInfo" style="font-size:13px;color:#475569;margin-bottom:16px;"></p>
+        <button type="button" onclick="logoutGoogle()" class="btn btn-dark" style="width:100%;padding:10px;">Keluar (Logout)</button>
+      </div>
     </div>
   </div>
   <script>
