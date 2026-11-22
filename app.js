@@ -8,13 +8,56 @@ var firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
+var auth = firebase.auth();
 
 var cats = ["Semua", "Novel Romantis", "Novel Religi", "Novel Sejarah", "Novel Rumtang", "Biografi", "Novel Action", "Novel Horor", "Cerita Anak"];
-var selCat = "Semua", curBook = null, curChapIdx = 0, fSize = 17, usr = localStorage.getItem("babkita_user") || null, books = [];
+var selCat = "Semua", curBook = null, curChapIdx = 0, fSize = 17, currentUser = null, books = [];
+
+auth.onAuthStateChanged(function(user) {
+  currentUser = user;
+  updateAuthUI();
+});
 
 function updateAuthUI() {
   var btn = document.getElementById("authBtn");
-  if (btn) btn.textContent = usr ? ("Halo, " + usr) : "Masuk / Daftar";
+  var loggedOutBox = document.getElementById("loggedOutBox");
+  var loggedInBox = document.getElementById("loggedInBox");
+  var modalTitle = document.getElementById("authModalTitle");
+  var emailInfo = document.getElementById("userEmailInfo");
+
+  if (currentUser) {
+    var displayName = currentUser.displayName || currentUser.email.split("@")[0];
+    if (btn) btn.textContent = "Halo, " + displayName;
+    if (modalTitle) modalTitle.textContent = "Akun Penulis";
+    if (emailInfo) emailInfo.innerHTML = "Masuk sebagai <strong>" + displayName + "</strong><br><span style='font-size:12px;'>" + currentUser.email + "</span>";
+    if (loggedOutBox) loggedOutBox.classList.add("hidden");
+    if (loggedInBox) loggedInBox.classList.remove("hidden");
+  } else {
+    if (btn) btn.textContent = "Masuk / Daftar";
+    if (modalTitle) modalTitle.textContent = "Masuk ke BabKita";
+    if (loggedOutBox) loggedOutBox.classList.remove("hidden");
+    if (loggedInBox) loggedInBox.classList.add("hidden");
+  }
+}
+
+function loginWithGoogle() {
+  var provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+    .then(function(result) {
+      closeModal("authModal");
+      var nama = result.user.displayName || result.user.email;
+      alert("Selamat datang, " + nama + "!");
+    })
+    .catch(function(err) {
+      alert("Gagal masuk dengan Google: " + err.message);
+    });
+}
+
+function logoutGoogle() {
+  auth.signOut().then(function() {
+    closeModal("authModal");
+    alert("Anda telah keluar dari akun.");
+  });
 }
 
 function renderCategories() {
@@ -58,24 +101,43 @@ function pickCat(c) {
   drawBooks();
 }
 
+function buildBookCard(b) {
+  var totalBab = b.chapterList ? b.chapterList.length : (b.chapters || 1);
+  return '<div class="card" onclick="openDetail(\'' + b.docId + '\')">' +
+    '<div class="card-cover" style="background:linear-gradient(160deg,#1e293b,#0f172a);position:relative;">' +
+      (b.cover ? '<img src="' + b.cover + '" style="width:100%;height:100%;object-fit:cover;" />' : '<div style="position:absolute;inset:0;padding:10px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;"><div style="margin-top:22px;font-size:12px;font-weight:bold;">' + b.title + '</div><div style="font-size:10px;color:#fcd34d;">' + b.author + '</div></div>') +
+      '<span class="badge-cat">' + b.category + '</span>' +
+    '</div>' +
+    '<div class="card-body">' +
+      '<div><div class="card-title">' + b.title + '</div><div class="card-author">' + b.author + '</div></div>' +
+      '<div class="card-stats"><span>Baca ' + (b.views || 0) + '</span><span>Bab ' + totalBab + '</span><span>Sub ' + (b.subs || 0) + '</span><span>Kom ' + (b.comments ? b.comments.length : 0) + '</span></div>' +
+    '</div></div>';
+}
+
 function drawBooks() {
   var q = document.getElementById("searchInput").value.toLowerCase();
   var list = books.filter(function(b) {
     return (selCat === "Semua" || (b.category || "").toLowerCase().indexOf(selCat.toLowerCase()) !== -1) &&
            ((b.title || "").toLowerCase().indexOf(q) !== -1 || (b.author || "").toLowerCase().indexOf(q) !== -1);
   });
-  document.getElementById("booksGrid").innerHTML = list.map(function(b) {
-    var totalBab = b.chapterList ? b.chapterList.length : (b.chapters || 1);
-    return '<div class="card" onclick="openDetail(\'' + b.docId + '\')">' +
-      '<div class="card-cover" style="background:linear-gradient(160deg,#1e293b,#0f172a);position:relative;">' +
-        (b.cover ? '<img src="' + b.cover + '" style="width:100%;height:100%;object-fit:cover;" />' : '<div style="position:absolute;inset:0;padding:10px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;"><div style="margin-top:22px;font-size:12px;font-weight:bold;">' + b.title + '</div><div style="font-size:10px;color:#fcd34d;">' + b.author + '</div></div>') +
-        '<span class="badge-cat">' + b.category + '</span>' +
-      '</div>' +
-      '<div class="card-body">' +
-        '<div><div class="card-title">' + b.title + '</div><div class="card-author">' + b.author + '</div></div>' +
-        '<div class="card-stats"><span>Baca ' + (b.views || 0) + '</span><span>Bab ' + totalBab + '</span><span>Sub ' + (b.subs || 0) + '</span><span>Kom ' + (b.comments ? b.comments.length : 0) + '</span></div>' +
-      '</div></div>';
-  }).join("");
+  document.getElementById("booksGrid").innerHTML = list.map(buildBookCard).join("");
+
+  var catShelvesEl = document.getElementById("categoryShelves");
+  if (catShelvesEl) {
+    if (selCat === "Semua" && !q) {
+      var kategoriList = cats.slice(1);
+      catShelvesEl.innerHTML = kategoriList.map(function(kat) {
+        var bukuKategori = books.filter(function(b) {
+          return (b.category || "").toLowerCase() === kat.toLowerCase();
+        });
+        if (!bukuKategori.length) return "";
+        return '<div class="section-title">' + kat + '</div>' +
+               '<div class="grid">' + bukuKategori.map(buildBookCard).join("") + '</div>';
+      }).join("");
+    } else {
+      catShelvesEl.innerHTML = "";
+    }
+  }
 }
 function showView(v) {
   ["homeView", "detailView", "readerView"].forEach(function(id) { document.getElementById(id).classList.add("hidden"); });
@@ -151,7 +213,8 @@ function drawComs() {
 function postComment() {
   var i = document.getElementById("commInput");
   if (!i || !i.value.trim() || !curBook) return;
-  var updatedComs = [{ user: usr || "Pembaca", text: i.value.trim() }].concat(curBook.comments || []);
+  var namaKomentator = currentUser ? (currentUser.displayName || currentUser.email.split("@")[0]) : "Pembaca";
+  var updatedComs = [{ user: namaKomentator, text: i.value.trim() }].concat(curBook.comments || []);
   i.value = "";
   curBook.comments = updatedComs;
   drawComs();
@@ -159,20 +222,26 @@ function postComment() {
 }
 
 function openModal(id) {
-  var el = document.getElementById(id);
-  if (el) { el.classList.remove("hidden"); if (id === "writeModal" && usr) document.getElementById("nAuthor").value = usr; }
-}
-function closeModal(id) { var el = document.getElementById(id); if (el) el.classList.add("hidden"); }
+  if ((id === "writeModal" || id === "chapModal") && !currentUser) {
+    alert("Silakan Masuk dengan Google terlebih dahulu untuk menulis atau menambah bab.");
+    var authEl = document.getElementById("authModal");
+    if (authEl) authEl.classList.remove("hidden");
+    return;
+  }
 
-function doLogin(e) {
-  e.preventDefault();
-  var nameVal = document.getElementById("uName").value.trim();
-  if (!nameVal) return;
-  usr = nameVal;
-  localStorage.setItem("babkita_user", usr);
-  updateAuthUI();
-  closeModal("authModal");
-  alert("Selamat datang, " + usr + "!");
+  var el = document.getElementById(id);
+  if (el) {
+    el.classList.remove("hidden");
+    if (id === "writeModal" && currentUser) {
+      var namaPenulis = currentUser.displayName || currentUser.email.split("@")[0];
+      document.getElementById("nAuthor").value = namaPenulis;
+    }
+  }
+}
+
+function closeModal(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.add("hidden");
 }
 
 function compressCover(file, cb) {
@@ -196,13 +265,15 @@ function formatParagraphs(text) {
 
 function addNewBook(e) {
   e.preventDefault();
+  if (!currentUser) { alert("Sesi login berakhir. Silakan masuk dengan Google kembali."); return; }
   var btn = e.target.querySelector("button[type='submit']");
   btn.disabled = true; btn.textContent = "Menerbitkan...";
   var title = document.getElementById("nTitle").value.trim(), cat = document.getElementById("nCat").value, author = document.getElementById("nAuthor").value.trim(), rawText = document.getElementById("nContent").value.trim(), fileInput = document.getElementById("nCoverFile");
   var bab1Html = formatParagraphs(rawText);
   function save(coverData) {
     db.collection("books").add({
-      title: title, author: author, category: cat, views: 1, chapters: 1, subs: 0,
+      title: title, author: author, authorUid: currentUser.uid, authorEmail: currentUser.email,
+      category: cat, views: 1, chapters: 1, subs: 0,
       cover: coverData || "", excerpt: rawText.slice(0, 180) + "...", content: bab1Html,
       chapterList: [{ title: "Bab 1", content: bab1Html }], comments: [], createdAt: Date.now()
     })
@@ -216,6 +287,7 @@ function addNewBook(e) {
 function addChapter(e) {
   e.preventDefault();
   if (!curBook) return;
+  if (!currentUser) { alert("Sesi login berakhir. Silakan masuk dengan Google kembali."); return; }
   var btn = e.target.querySelector("button[type='submit']");
   btn.disabled = true; btn.textContent = "Menyimpan...";
   var cTitle = document.getElementById("cTitle").value.trim(), cContent = document.getElementById("cContent").value.trim();
