@@ -309,27 +309,79 @@ function formatParagraphs(text) {
   return text.split("\n").map(function(p) { return p.trim() ? "<p style='margin-bottom:14px;'>" + p + "</p>" : ""; }).join("");
 }
 
+
 function addNewBook(e) {
   e.preventDefault();
-  if (!currentUser) { alert("Sesi login berakhir. Silakan masuk dengan Google kembali."); return; }
-  var btn = e.target.querySelector("button[type='submit']");
-  btn.disabled = true; btn.textContent = "Menerbitkan...";
-  var title = document.getElementById("nTitle").value.trim(), cat = document.getElementById("nCat").value, author = document.getElementById("nAuthor").value.trim(), rawText = document.getElementById("nContent").value.trim(), fileInput = document.getElementById("nCoverFile");
-  var bab1Html = formatParagraphs(rawText);
+
+  if (!currentUser) {
+    alert("Silakan masuk dengan Google terlebih dahulu.");
+    return;
+  }
+ var btn = e.target.querySelector("button[type='submit']");
+  btn.disabled = true;
+  btn.textContent = "Menerbitkan...";
+
+  var title = document.getElementById("nTitle").value.trim();
+  var cat = document.getElementById("nCat").value;
+  var author = document.getElementById("nAuthor").value.trim();
+  var editor = document.getElementById("nContent");
+  var bab1Html = editor.innerHTML.trim();
+  var rawText = editor.innerText.trim();
+  var fileInput = document.getElementById("nCoverFile");
+
+  if (!rawText) {
+    alert("Isi cerita Bab 1 belum ditulis.");
+    btn.disabled = false;
+    btn.textContent = "Terbitkan Sekarang";
+    return;
+  }
+
   function save(coverData) {
     db.collection("books").add({
-      title: title, author: author, authorUid: currentUser.uid, authorEmail: currentUser.email,
-      category: cat, views: 1, chapters: 1, subs: 0,
-      cover: coverData || "", excerpt: rawText.slice(0, 180) + "...", content: bab1Html,
-      chapterList: [{ title: "Bab 1", content: bab1Html }], comments: [], createdAt: Date.now()
+      title: title,
+      author: author,
+      authorUid: currentUser.uid,
+      authorEmail: currentUser.email,
+      category: cat,
+      views: 1,
+      chapters: 1,
+      subs: 0,
+      cover: coverData || "",
+      excerpt: rawText.slice(0, 180) + "...",
+      content: bab1Html,
+      chapterList: [{
+        title: "Bab 1",
+        content: bab1Html
+      }],
+      comments: [],
+      createdAt: Date.now()
     })
-    .then(function() { e.target.reset(); closeModal("writeModal"); btn.disabled = false; btn.textContent = "Terbitkan Sekarang"; alert("Buku berhasil diterbitkan!"); })
-    .catch(function(err) { btn.disabled = false; btn.textContent = "Terbitkan Sekarang"; alert("Gagal: " + err.message); });
+    .then(function() {
+      e.target.reset();
+      editor.innerHTML = "";
+      closeModal("writeModal");
+      btn.disabled = false;
+      btn.textContent = "Terbitkan Sekarang";
+      alert("Buku berhasil diterbitkan!");
+    })
+    .catch(function(err) {
+      btn.disabled = false;
+      btn.textContent = "Terbitkan Sekarang";
+      alert("Gagal: " + err.message);
+    });
   }
-  var pickedFile = (fileInput && fileInput.files && fileInput.files.length) ? fileInput.files.item(0) : null;
-  if (pickedFile) { compressCover(pickedFile, save); } else { save(""); }
-}
 
+  var pickedFile =
+    fileInput && fileInput.files && fileInput.files.length
+      ? fileInput.files.item(0)
+      : null;
+
+  if (pickedFile) {
+    compressCover(pickedFile, save);
+  } else {
+    save("");
+  }
+}
 function addChapter(e) {
   e.preventDefault();
   if (!curBook) return;
