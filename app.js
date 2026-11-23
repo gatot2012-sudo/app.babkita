@@ -366,3 +366,25 @@ function addChapter(e) {
 }
 
 startApp();
+function bagikanBuku() {
+  if (!curBook || !curBook.docId) {
+    alert("Silakan buka salah satu buku terlebih dahulu sebelum membagikan.");
+    return;
+  }
+
+  var judul = curBook.title || "Cerita di BabKita";
+  var urlShare = "https://babkita.com" + curBook.docId;
+
+  if (navigator.share) {
+    navigator.share({
+      title: judul,
+      text: 'Baca "' + judul + '" di BabKita:',
+      url: urlShare
+    }).catch(function(err) { console.log(err); });
+  } else {
+    navigator.clipboard.writeText(urlShare);
+    alert("Link cerita berhasil disalin:\n" + urlShare);
+  }
+}
+
+
