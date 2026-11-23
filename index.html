@@ -784,7 +784,21 @@
       <div style="display:flex;justify-content:space-between;margin-bottom:14px;"><h3>Tambah Bab Baru</h3><button onclick="closeModal('chapModal')" style="border:none;background:none;font-size:18px;cursor:pointer;">X</button></div>
       <form onsubmit="addChapter(event)">
         <div class="form-group"><label>Judul Bab</label><input type="text" id="cTitle" required /></div>
-        <div class="form-group"><label>Isi Cerita</label><textarea id="cContent" rows="5" required></textarea></div>
+        
+<div class="form-group">
+  <label>Isi Cerita</label>
+  <div class="editor-toolbar">
+    <button type="button" onclick="editorCommand('cContent','bold')"><b>B</b></button>
+    <button type="button" onclick="editorCommand('cContent','italic')"><i>I</i></button>
+    <button type="button" onclick="editorCommand('cContent','underline')"><u>U</u></button>
+    <button type="button" onclick="editorCommand('cContent','justifyLeft')">Kiri</button>
+    <button type="button" onclick="editorCommand('cContent','justifyCenter')">Tengah</button>
+    <button type="button" onclick="editorCommand('cContent','justifyFull')">Rata</button>
+    <button type="button" onclick="editorCommand('cContent','undo')">↶</button>
+    <button type="button" onclick="editorCommand('cContent','redo')">↷</button>
+  </div>
+  <div id="cContent" class="writing-area" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Mulailah menulis bab baru di sini..."></div>
+</div>
         <button type="submit" class="btn btn-amber" style="width:100%;">Simpan Bab</button>
       </form>
     </div>
