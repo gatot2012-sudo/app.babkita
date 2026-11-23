@@ -373,7 +373,8 @@ function bagikanBuku() {
   }
 
   var judul = curBook.title || "Cerita di BabKita";
-  var urlShare = "https://app." + "://babkita.com" + curBook.docId;
+  var domain = "app" + "." + "babkita" + "." + "com";
+  var urlShare = "https://" + domain + "/baca?id=" + curBook.docId;
 
   if (navigator.share) {
     navigator.share({
