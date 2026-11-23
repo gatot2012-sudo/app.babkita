@@ -370,4 +370,13 @@ function bagikanBuku() {
   }
 }
 
+/* ===== TOOLBAR EDITOR BABKITA ===== */
+function editorCommand(editorId, command) {
+  var editor = document.getElementById(editorId);
+  if (!editor) return;
+
+  editor.focus();
+  document.execCommand(command, false, null);
+}
+
 startApp();
