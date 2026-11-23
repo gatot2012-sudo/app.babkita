@@ -383,6 +383,44 @@ function addNewBook(e) {
   }
 }
 
+function sanitizeEditorHtml(html) {
+  var box = document.createElement("div");
+  box.innerHTML = html;
+
+  var allowed = [
+    "P", "BR", "B", "STRONG", "I", "EM",
+    "U", "UL", "OL", "LI", "H2", "H3",
+    "BLOCKQUOTE", "DIV"
+  ];
+
+  function clean(node) {
+    Array.from(node.children).forEach(function(el) {
+      if (!allowed.includes(el.tagName)) {
+        if (["SCRIPT", "STYLE", "IFRAME", "OBJECT", "SVG"].includes(el.tagName)) {
+          el.remove();
+        } else {
+          el.replaceWith(...Array.from(el.childNodes));
+        }
+        return;
+      }
+
+      var align = el.style.textAlign;
+      Array.from(el.attributes).forEach(function(attr) {
+        el.removeAttribute(attr.name);
+      });
+
+      if (["left", "center", "right", "justify"].includes(align)) {
+        el.style.textAlign = align;
+      }
+
+      clean(el);
+    });
+  }
+
+  clean(box);
+  return box.innerHTML;
+}
+
 function addChapter(e) {
   e.preventDefault();
 
