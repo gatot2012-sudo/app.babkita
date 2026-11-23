@@ -1,6 +1,6 @@
 var firebaseConfig = {
   apiKey: "AIzaSyBi8mrD3OLZ3CM3Xgc6LMSbVs2WWKA6HXg",
-  authDomain: "babkita-app" + ".firebaseapp.com",
+  authDomain: "://firebaseapp.com",
   projectId: "babkita-app",
   storageBucket: "babkita-app.firebasestorage.app",
   messagingSenderId: "2848511454",
@@ -29,6 +29,7 @@ var cats = [
 ];
 
 var selCat = "Semua", curBook = null, curChapIdx = 0, fSize = 17, currentUser = null, books = [];
+var autoOpenedFromUrl = false;
 
 auth.onAuthStateChanged(function(user) {
   currentUser = user;
@@ -87,7 +88,6 @@ function getBookChapters(b) {
   if (b.chapterList && b.chapterList.length) return b.chapterList;
   return [{ title: "Bab 1", content: b.content || "<p>Belum ada isi cerita.</p>" }];
 }
-
 function startApp() {
   updateAuthUI();
   renderCategories();
@@ -102,6 +102,16 @@ function startApp() {
     });
     document.getElementById("statusMsg").textContent = books.length ? ("Menampilkan " + books.length + " buku") : "Belum ada buku. Klik + Menulis untuk mulai menerbitkan!";
     drawBooks();
+
+    if (!autoOpenedFromUrl && books.length > 0) {
+      var params = new URLSearchParams(window.location.search);
+      var idDariUrl = params.get("id");
+      if (idDariUrl) {
+        autoOpenedFromUrl = true;
+        openDetail(idDariUrl);
+      }
+    }
+
     if (curBook) {
       var updated = books.find(function(b) { return b.docId === curBook.docId; });
       if (updated) { curBook = updated; renderChapterList(); }
@@ -110,6 +120,7 @@ function startApp() {
     document.getElementById("statusMsg").textContent = "Error database: " + err.message;
   });
 }
+
 function pickCat(c) {
   selCat = c;
   var titleEl = document.getElementById("shelfTitle");
@@ -123,6 +134,19 @@ function pickCat(c) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function buildBookCard(b) {
+  var totalBab = b.chapterList ? b.chapterList.length : (b.chapters || 1);
+  return '<div class="card" onclick="openDetail(\'' + b.docId + '\')">' +
+    '<div class="card-cover" style="background:linear-gradient(160deg,#1e293b,#0f172a);position:relative;">' +
+      (b.cover ? '<img src="' + b.cover + '" style="width:100%;height:100%;object-fit:cover;" />' : '<div style="position:absolute;inset:0;padding:10px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;"><div style="margin-top:22px;font-size:12px;font-weight:bold;">' + b.title + '</div><div style="font-size:10px;color:#fcd34d;">' + b.author + '</div></div>') +
+      '<span class="badge-cat">' + b.category + '</span>' +
+    '</div>' +
+    '<div class="card-body">' +
+      '<div><div class="card-title">' + b.title + '</div><div class="card-author">' + b.author + '</div></div>' +
+      '<div class="card-stats"><span>Baca ' + (b.views || 0) + '</span><span>Bab ' + totalBab + '</span><span>Sub ' + (b.subs || 0) + '</span><span>Kom ' + (b.comments ? b.comments.length : 0) + '</span></div>' +
+    '</div></div>';
+}
+
 function drawBooks() {
   var q = document.getElementById("searchInput").value.toLowerCase();
   var gridEl = document.getElementById("booksGrid");
@@ -131,18 +155,16 @@ function drawBooks() {
            ((b.title || "").toLowerCase().indexOf(q) !== -1 || (b.author || "").toLowerCase().indexOf(q) !== -1);
   });
 
-  // Jika sedang membuka halaman kategori tertentu dan belum ada isinya
   if (selCat !== "Semua" && !list.length) {
     gridEl.innerHTML = '<p style="font-size:13px;color:#64748b;padding:16px 0;">Belum ada tulisan di kategori <strong>' + selCat + '</strong>. Jadilah yang pertama menulis!</p>';
   } else {
     gridEl.innerHTML = list.map(buildBookCard).join("");
   }
 
-  // Tampilkan semua blok rak kategori di beranda (dapat diklik ke halaman masing-masing)
   var catShelvesEl = document.getElementById("categoryShelves");
   if (catShelvesEl) {
     if (selCat === "Semua" && !q) {
-      var semuaKategori = cats.slice(1); // Semua kategori selain "Semua"
+      var semuaKategori = cats.slice(1);
       catShelvesEl.innerHTML = semuaKategori.map(function(kat) {
         var bukuKategori = books.filter(function(b) {
           return (b.category || "").toLowerCase() === kat.toLowerCase();
@@ -163,44 +185,7 @@ function drawBooks() {
     }
   }
 }
-function buildBookCard(b) {
-  var totalBab = b.chapterList ? b.chapterList.length : (b.chapters || 1);
-  return '<div class="card" onclick="openDetail(\'' + b.docId + '\')">' +
-    '<div class="card-cover" style="background:linear-gradient(160deg,#1e293b,#0f172a);position:relative;">' +
-      (b.cover ? '<img src="' + b.cover + '" style="width:100%;height:100%;object-fit:cover;" />' : '<div style="position:absolute;inset:0;padding:10px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;"><div style="margin-top:22px;font-size:12px;font-weight:bold;">' + b.title + '</div><div style="font-size:10px;color:#fcd34d;">' + b.author + '</div></div>') +
-      '<span class="badge-cat">' + b.category + '</span>' +
-    '</div>' +
-    '<div class="card-body">' +
-      '<div><div class="card-title">' + b.title + '</div><div class="card-author">' + b.author + '</div></div>' +
-      '<div class="card-stats"><span>Baca ' + (b.views || 0) + '</span><span>Bab ' + totalBab + '</span><span>Sub ' + (b.subs || 0) + '</span><span>Kom ' + (b.comments ? b.comments.length : 0) + '</span></div>' +
-    '</div></div>';
-}
 
-function drawBooks() {
-  var q = document.getElementById("searchInput").value.toLowerCase();
-  var list = books.filter(function(b) {
-    return (selCat === "Semua" || (b.category || "").toLowerCase().indexOf(selCat.toLowerCase()) !== -1) &&
-           ((b.title || "").toLowerCase().indexOf(q) !== -1 || (b.author || "").toLowerCase().indexOf(q) !== -1);
-  });
-  document.getElementById("booksGrid").innerHTML = list.map(buildBookCard).join("");
-
-  var catShelvesEl = document.getElementById("categoryShelves");
-  if (catShelvesEl) {
-    if (selCat === "Semua" && !q) {
-      var kategoriList = cats.slice(1);
-      catShelvesEl.innerHTML = kategoriList.map(function(kat) {
-        var bukuKategori = books.filter(function(b) {
-          return (b.category || "").toLowerCase() === kat.toLowerCase();
-        });
-        if (!bukuKategori.length) return "";
-        return '<div class="section-title">' + kat + '</div>' +
-               '<div class="grid">' + bukuKategori.map(buildBookCard).join("") + '</div>';
-      }).join("");
-    } else {
-      catShelvesEl.innerHTML = "";
-    }
-  }
-}
 function showView(v) {
   ["homeView", "detailView", "readerView"].forEach(function(id) { document.getElementById(id).classList.add("hidden"); });
   document.getElementById(v + "View").classList.remove("hidden");
@@ -237,7 +222,6 @@ function openDetail(docId) {
   renderChapterList();
   showView("detail");
 }
-
 function openReader(idx) {
   if (!curBook) return;
   var chaps = getBookChapters(curBook);
@@ -365,7 +349,6 @@ function addChapter(e) {
   });
 }
 
-startApp();
 function bagikanBuku() {
   if (!curBook || !curBook.docId) {
     alert("Silakan buka salah satu buku terlebih dahulu sebelum membagikan.");
@@ -373,8 +356,7 @@ function bagikanBuku() {
   }
 
   var judul = curBook.title || "Cerita di BabKita";
-  var domain = "app" + "." + "babkita" + "." + "com";
-  var urlShare = "https://" + domain + "/baca?id=" + curBook.docId;
+  var urlShare = window.location.origin + "/baca?id=" + curBook.docId;
 
   if (navigator.share) {
     navigator.share({
@@ -387,3 +369,5 @@ function bagikanBuku() {
     alert("Link cerita berhasil disalin:\n" + urlShare);
   }
 }
+
+startApp();
