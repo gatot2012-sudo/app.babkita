@@ -691,8 +691,21 @@
           </select>
         </div>
   <div class="form-group"><label>Penulis</label><input type="text" id="nAuthor" required /></div>
-        <div class="form-group"><label>Foto Cover Buku (Opsional)</label><input type="file" id="nCoverFile" accept="image/*" /></div>
-        <div class="form-group"><label>Isi Cerita (Bab 1)</label><textarea id="nContent" rows="5" required></textarea></div>
+        <div class="form-group"><label>Foto Cover Buku (Opsional)</label><input type="file" id="nCoverFile" accept="image/*" /></div>     
+        <div class="form-group"> <label>Isi Cerita (Bab 1)</label>
+  <div class="editor-toolbar">
+    <button type="button" onclick="editorCommand('nContent','bold')"><b>B</b></button>
+    <button type="button" onclick="editorCommand('nContent','italic')"><i>I</i></button>
+    <button type="button" onclick="editorCommand('nContent','underline')"><u>U</u></button>
+    <button type="button" onclick="editorCommand('nContent','justifyLeft')">Kiri</button>
+    <button type="button" onclick="editorCommand('nContent','justifyCenter')">Tengah</button>
+    <button type="button" onclick="editorCommand('nContent','justifyFull')">Rata</button>
+    <button type="button" onclick="editorCommand('nContent','undo')">↶</button>
+    <button type="button" onclick="editorCommand('nContent','redo')">↷</button>
+  </div>
+  <div id="nContent" class="writing-area" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="Mulailah menulis Bab 1 di sini..." required></div>
+</div>
+
         <button type="submit" class="btn btn-amber" style="width:100%;">Terbitkan Sekarang</button>
       </form>
     </div>
