@@ -561,6 +561,74 @@
   }
 }
 
+/* ===== EDITOR TULIS BABKITA ===== */
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 9px;
+  margin-bottom: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.editor-toolbar button {
+  min-width: 34px;
+  padding: 7px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.editor-toolbar button:active {
+  background: #fef3c7;
+}
+
+.writing-area {
+  width: 100%;
+  min-height: 300px;
+  padding: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  color: #1e293b;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  line-height: 1.8;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  outline: none;
+}
+
+.writing-area:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px #fef3c7;
+}
+
+.writing-area:empty:before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+}
+
+.writing-area p {
+  margin-bottom: 14px;
+}
+
+@media (max-width: 600px) {
+  .writing-area {
+    min-height: 260px;
+    font-size: 16px;
+  }
+
+  .editor-toolbar button {
+    padding: 8px 10px;
+  }
+}
+
   </style>
     <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#f59e0b" />
