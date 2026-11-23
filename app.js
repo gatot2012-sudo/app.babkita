@@ -373,7 +373,7 @@ function bagikanBuku() {
   }
 
   var judul = curBook.title || "Cerita di BabKita";
-  var urlShare = "https://babkita.com" + curBook.docId;
+  var urlShare = "https://app." + "://babkita.com" + curBook.docId;
 
   if (navigator.share) {
     navigator.share({
@@ -386,5 +386,3 @@ function bagikanBuku() {
     alert("Link cerita berhasil disalin:\n" + urlShare);
   }
 }
-
-
