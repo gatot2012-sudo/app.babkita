@@ -325,7 +325,7 @@ function addNewBook(e) {
   var cat = document.getElementById("nCat").value;
   var author = document.getElementById("nAuthor").value.trim();
   var editor = document.getElementById("nContent");
-  var bab1Html = editor.innerHTML.trim();
+  var bab1Html = sanitizeEditorHtml(editor.innerHTML.trim());
   var rawText = editor.innerText.trim();
   var fileInput = document.getElementById("nCoverFile");
 
