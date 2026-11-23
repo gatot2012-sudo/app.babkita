@@ -579,5 +579,109 @@
   document.write('<scr' + 'ipt src="' + u + 'firebase-auth-compat.js"></scr' + 'ipt>');
 </script>
 <script src="app.js"></script>
+  <script>
+(function () {
+  let bannerTimer = null;
+  let lastTotalSlides = -1;
+
+  function slideBanner(dir) {
+    const track = document.querySelector('.banner-carousel');
+    if (!track || !track.clientWidth) return;
+    const total = track.querySelectorAll('.banner-slide').length;
+    if (total <= 1) return;
+
+    const idx = Math.round(track.scrollLeft / track.clientWidth);
+    const next = (idx + dir + total) % total;
+    track.scrollTo({ left: next * track.clientWidth, behavior: 'smooth' });
+  }
+
+  function syncBannerUI() {
+    const wrap = document.querySelector('.banner-wrap');
+    const track = document.querySelector('.banner-carousel');
+    if (!wrap || !track) return;
+
+    let prevBtn = wrap.querySelector('.banner-nav.prev');
+    if (!prevBtn) {
+      prevBtn = document.createElement('button');
+      prevBtn.type = 'button';
+      prevBtn.className = 'banner-nav prev';
+      prevBtn.setAttribute('aria-label', 'Banner sebelumnya');
+      prevBtn.innerHTML = '&#10094;';
+      prevBtn.onclick = () => slideBanner(-1);
+      wrap.appendChild(prevBtn);
+    }
+
+    let nextBtn = wrap.querySelector('.banner-nav.next');
+    if (!nextBtn) {
+      nextBtn = document.createElement('button');
+      nextBtn.type = 'button';
+      nextBtn.className = 'banner-nav next';
+      nextBtn.setAttribute('aria-label', 'Banner berikutnya');
+      nextBtn.innerHTML = '&#10095;';
+      nextBtn.onclick = () => slideBanner(1);
+      wrap.appendChild(nextBtn);
+    }
+
+    let dotsBox = wrap.querySelector('#bannerDots');
+    let dotsCreated = false;
+    if (!dotsBox) {
+      dotsBox = document.createElement('div');
+      dotsBox.id = 'bannerDots';
+      dotsBox.className = 'banner-dots';
+      wrap.appendChild(dotsBox);
+      dotsCreated = true;
+    }
+
+    const total = track.querySelectorAll('.banner-slide').length;
+
+    // Pasang listener scroll sekali saja per elemen track
+    if (!track.dataset.bannerBound) {
+      track.dataset.bannerBound = '1';
+      track.addEventListener('scroll', () => {
+        if (!track.clientWidth) return;
+        const idx = Math.round(track.scrollLeft / track.clientWidth);
+        dotsBox.querySelectorAll('.banner-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === idx);
+        });
+      });
+    }
+
+    if (!dotsCreated && total === lastTotalSlides) return;
+    lastTotalSlides = total;
+
+    if (total <= 1) {
+      dotsBox.innerHTML = '';
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+      clearInterval(bannerTimer);
+      return;
+    }
+
+    prevBtn.style.display = '';
+    nextBtn.style.display = '';
+
+    dotsBox.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'banner-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', 'Banner ' + (i + 1));
+      dot.onclick = () => {
+        track.scrollTo({ left: i * track.clientWidth, behavior: 'smooth' });
+      };
+      dotsBox.appendChild(dot);
+    }
+
+    clearInterval(bannerTimer);
+    bannerTimer = setInterval(() => slideBanner(1), 5000);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    syncBannerUI();
+    const observer = new MutationObserver(() => syncBannerUI());
+    observer.observe(document.body, { childList: true, subtree: true });
+  });
+})();
+</script>
 </body>
 </html>
