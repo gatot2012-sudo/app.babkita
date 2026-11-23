@@ -123,7 +123,7 @@
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               <button class="btn btn-amber" onclick="openReader(0)">Baca Bab 1</button>
               <button class="btn btn-outline" id="subBtn" onclick="toggleSub()">Subscribe</button>
-              <button type="button" onclick="bagikanBuku()">Bagikan</button>
+              <button type="button" class="btn" style="background-color: #16a34a; color: white; border: none;" onclick="bagikanBuku()">Bagikan</button>
               <button class="btn btn-dark" onclick="openModal('chapModal')">+ Tambah Bab</button>
             </div>
           </div>
@@ -232,18 +232,18 @@
   document.write('<scr' + 'ipt src="' + u + 'firebase-auth-compat.js"></scr' + 'ipt>');
 </script>
 <script src="app.js"></script>
- 
-<script>
+ <script>
   function bagikanBuku() {
     const params = new URLSearchParams(window.location.search);
-    const idBuku = window.currentBookId || window.selectedBookId || params.get('id');
+    // Mengecek ID buku dari variabel app.js atau URL
+    const idBuku = window.activeBookId || window.currentBookId || window.curBookId || (window.curBook && window.curBook.id) || params.get('id');
 
     if (!idBuku) {
-      alert('Buka salah satu buku terlebih dahulu sebelum membagikan.');
+      alert('ID buku belum terbaca. Silakan cek variabel di app.js.');
       return;
     }
 
-    const judul = document.querySelector('h1')?.innerText || 'Cerita di BabKita';
+    const judul = document.getElementById('dTitle')?.innerText || 'Cerita di BabKita';
     const urlShare = `https://babkita.com{idBuku}`;
 
     if (navigator.share) {
@@ -257,6 +257,6 @@
       alert('Link cerita berhasil disalin:\n' + urlShare);
     }
   }
-</script> 
+</script>
 </body>
 </html>
