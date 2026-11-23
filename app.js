@@ -382,25 +382,57 @@ function addNewBook(e) {
     save("");
   }
 }
+
 function addChapter(e) {
   e.preventDefault();
-  if (!curBook) return;
-  if (!currentUser) { alert("Sesi login berakhir. Silakan masuk dengan Google kembali."); return; }
+
+  if (!curBook || !currentUser) {
+    alert("Silakan masuk kembali.");
+    return;
+  }
+
+  if (curBook.authorUid !== currentUser.uid) {
+    alert("Maaf, hanya penulis pemilik novel yang boleh menambahkan bab.");
+    return;
+  }
+
   var btn = e.target.querySelector("button[type='submit']");
-  btn.disabled = true; btn.textContent = "Menyimpan...";
-  var cTitle = document.getElementById("cTitle").value.trim(), cContent = document.getElementById("cContent").value.trim();
+  var editor = document.getElementById("cContent");
+  var cTitle = document.getElementById("cTitle").value.trim();
+  var cContent = editor.innerHTML.trim();
+  var rawText = editor.innerText.trim();
+
+  if (!cTitle || !rawText) {
+    alert("Judul dan isi bab harus diisi.");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "Menyimpan...";
+
   var currentChaps = getBookChapters(curBook).slice();
-  currentChaps.push({ title: cTitle, content: formatParagraphs(cContent) });
+
+  currentChaps.push({
+    title: cTitle,
+    content: sanitizeEditorHtml(cContent)
+  });
+
   db.collection("books").doc(curBook.docId).update({
-    chapterList: currentChaps, chapters: currentChaps.length
+    chapterList: currentChaps,
+    chapters: currentChaps.length
   }).then(function() {
-    e.target.reset(); closeModal("chapModal"); btn.disabled = false; btn.textContent = "Simpan Bab";
-    alert("Bab baru berhasil ditambahkan ke Daftar Bab!");
+    e.target.reset();
+    editor.innerHTML = "";
+    closeModal("chapModal");
+    btn.disabled = false;
+    btn.textContent = "Simpan Bab";
+    alert("Bab baru berhasil ditambahkan!");
   }).catch(function(err) {
-    btn.disabled = false; btn.textContent = "Simpan Bab"; alert("Gagal menyimpan bab: " + err.message);
+    btn.disabled = false;
+    btn.textContent = "Simpan Bab";
+    alert("Gagal menyimpan bab: " + err.message);
   });
 }
-
 function bagikanBuku() {
   if (!curBook || !curBook.docId) {
     alert("Silakan buka salah satu buku terlebih dahulu sebelum membagikan.");
