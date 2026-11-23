@@ -5,59 +5,406 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BabKita App – Satu Bab, Sejuta Cerita</title>
   <style>
-    :root { --amber:#f59e0b; --amber-dark:#d97706; --amber-light:#fef3c7; --bg:#fdfbf7; --text:#1e293b; --muted:#64748b; --border:#fde68a; }
-    * { box-sizing:border-box; margin:0; padding:0; }
-    body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); padding-bottom:60px; }
-    header { position:sticky; top:0; z-index:50; background:#fff; border-bottom:2px solid var(--border); box-shadow:0 2px 8px rgba(0,0,0,.04); }
-    .nav-top { max-width:1140px; margin:auto; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .logo { display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:800; font-size:20px; }
-    .logo-box { width:36px; height:36px; background:var(--amber); color:#000; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; }
-    .logo span { color:var(--amber-dark); }
-    .search-box { flex:1; max-width:400px; }
-    .search-box input { width:100%; padding:9px 16px; border-radius:99px; border:1px solid #cbd5e1; background:#f8fafc; font-size:13px; }
-    .btn { padding:8px 16px; border-radius:99px; border:none; font-weight:700; font-size:12px; cursor:pointer; }
-    .btn-amber { background:var(--amber); color:#000; }
-    .btn-dark { background:#0f172a; color:#fcd34d; }
-    .btn-outline { background:#fff; border:1px solid #cbd5e1; color:var(--text); }
-    .cat-bar { background:#fffbeb; border-top:1px solid var(--border); overflow-x:auto; white-space:nowrap; padding:10px 16px; }
-    .cat-inner { max-width:1140px; margin:auto; display:flex; gap:8px; }
-    .cat-pill { padding:6px 14px; border-radius:99px; border:1px solid var(--border); background:#fff; font-size:12px; font-weight:600; cursor:pointer; }
-    .cat-pill.active { background:var(--amber); color:#000; border-color:var(--amber-dark); }
-    main { max-width:1140px; margin:auto; padding:20px 16px; }
-    .hero { background:linear-gradient(135deg,#fbbf24,#f59e0b); padding:28px; border-radius:18px; margin-bottom:28px; color:#0f172a; }
-    .hero h1 { font-size:24px; margin:8px 0; font-weight:800; }
-    .banner-wrap { position:relative; margin-bottom:24px; }
-.banner-carousel { display:flex; overflow-x:auto; gap:14px; scroll-snap-type:x mandatory; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; padding-bottom:6px; }
-.banner-carousel::-webkit-scrollbar { display:none; }
-.banner-slide { flex:0 0 88%; max-width:520px; scroll-snap-align:start; border-radius:16px; overflow:hidden; aspect-ratio:12/5; cursor:pointer; transition:transform .2s; box-shadow:0 6px 16px rgba(0,0,0,.08); background:#1e293b; }
-.banner-slide:hover { transform:translateY(-3px); }
-.banner-slide img { width:100%; height:100%; object-fit:cover; display:block; }
-@media (min-width: 768px) { .banner-slide { flex:0 0 48%; } }
-.section-title { font-size:18px; font-weight:800; margin:24px 0 14px; display:flex; align-items:center; gap:8px; }
-    .section-title::before { content:""; width:5px; height:22px; background:var(--amber); border-radius:4px; }
-   .grid { display:flex; overflow-x:auto; gap:10px; padding-bottom:10px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
-.grid::-webkit-scrollbar { display:none; }
-.grid .card { flex:0 0 112px; width:112px; scroll-snap-align:start; }
-.card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; overflow:hidden; cursor:pointer; transition:.2s; display:flex; flex-direction:column; }
-    .card:hover { transform:translateY(-4px); border-color:var(--amber); box-shadow:0 8px 18px rgba(0,0,0,.06); }
-    .card-cover { position:relative; aspect-ratio:2/3; background:#e2e8f0; }
-    .card-cover img { width:100%; height:100%; object-fit:cover; }
-    .badge-cat { position:absolute; top:8px; left:8px; background:rgba(15,23,42,.85); color:#fcd34d; font-size:10px; font-weight:700; padding:3px 8px; border-radius:6px; }
-    .card-body { padding:12px; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
-    .card-title { font-size:13px; font-weight:700; line-height:1.35; margin-bottom:6px; }
-    .card-author { font-size:11px; color:var(--muted); margin-bottom:10px; }
-    .card-stats { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid #f1f5f9; padding-top:8px; font-size:10px; color:var(--muted); text-align:center; }
-    .hidden { display:none !important; }
-    .panel { background:#fff; border:1px solid var(--border); border-radius:16px; padding:24px; }
-    .detail-head { display:flex; flex-wrap:wrap; gap:24px; }
-    .detail-head img { width:180px; height:260px; object-fit:cover; border-radius:12px; }
-    .reader-box { max-width:760px; margin:auto; background:#fffdf9; border:1px solid var(--border); border-radius:16px; padding:32px; line-height:1.85; font-size:17px; }
-    .modal { position:fixed; inset:0; background:rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; padding:16px; z-index:100; }
-    .modal-box { background:#fff; border-radius:16px; max-width:460px; width:100%; padding:24px; }
-    .form-group { margin-bottom:12px; }
-    .form-group label { display:block; font-size:12px; font-weight:700; margin-bottom:4px; }
-    .form-group input,.form-group textarea,.form-group select { width:100%; padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; }
-  </style>
+  :root {
+    --amber: #f59e0b;
+    --amber-dark: #d97706;
+    --amber-light: #fef3c7;
+    --bg: #fdfbf7;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #fde68a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding-bottom: 60px;
+    overflow-x: clip;
+  }
+
+  /* ===== HEADER & NAVBAR ===== */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--border);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .04);
+  }
+
+  .nav-top {
+    max-width: 1240px;
+    margin: auto;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .logo-box {
+    width: 36px;
+    height: 36px;
+    background: var(--amber);
+    color: #000;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+  }
+
+  .logo span { color: var(--amber-dark); }
+
+  .search-box {
+    flex: 1;
+    max-width: 440px;
+    min-width: 0;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 9px 16px;
+    border-radius: 99px;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    font-size: 13px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .search-box input:focus {
+    outline: none;
+    border-color: var(--amber);
+    background: #fff;
+    box-shadow: 0 0 0 3px var(--amber-light);
+  }
+
+  /* Tombol tidak pernah wrap jadi lingkaran besar */
+  .btn {
+    padding: 8px 15px;
+    border-radius: 99px;
+    border: none;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: transform .15s, opacity .15s;
+  }
+
+  .btn:hover { transform: translateY(-1px); opacity: .94; }
+  .btn-amber { background: var(--amber); color: #000; }
+  .btn-dark { background: #0f172a; color: #fcd34d; }
+  .btn-outline { background: #fff; border: 1px solid #cbd5e1; color: var(--text); }
+
+  /* Perbaikan khusus Header di HP: Search turun ke baris 2 penuh */
+  @media (max-width: 767px) {
+    .nav-top {
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 12px;
+    }
+    .logo { font-size: 18px; margin-right: auto; }
+    .search-box {
+      order: 3;
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+    .btn { padding: 7px 12px; font-size: 12px; }
+    .btn-dark {
+      max-width: 130px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  /* ===== KATEGORI BAR (TANPA SCROLLBAR ABU-ABU) ===== */
+  .cat-bar {
+    background: #fffbeb;
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px 16px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cat-bar::-webkit-scrollbar { display: none; }
+
+  .cat-inner {
+    max-width: 1240px;
+    margin: auto;
+    display: flex;
+    gap: 8px;
+  }
+
+  .cat-pill {
+    padding: 6px 14px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all .2s;
+  }
+
+  .cat-pill:hover { border-color: var(--amber-dark); background: var(--amber-light); }
+  .cat-pill.active {
+    background: var(--amber);
+    color: #000;
+    border-color: var(--amber-dark);
+    box-shadow: 0 2px 6px rgba(245, 158, 11, .28);
+  }
+
+  /* ===== MAIN CONTAINER ===== */
+  main {
+    max-width: 1240px;
+    margin: auto;
+    padding: 16px 16px 24px;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    padding: 28px;
+    border-radius: 18px;
+    margin-bottom: 28px;
+    color: #0f172a;
+  }
+  .hero h1 { font-size: 24px; margin: 8px 0; font-weight: 800; }
+
+  /* ===== BANNER FULL 1 LAYAR (TIDAK MENGINTIP DI LAPTOP & HP) ===== */
+  .banner-wrap {
+    position: relative;
+    width: 100%;
+    margin-bottom: 28px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, .12);
+    background: #0f172a;
+  }
+
+  .banner-carousel {
+    display: flex;
+    width: 100%;
+    gap: 0; /* WAJIB 0 agar banner berikutnya tidak mengintip */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .banner-carousel::-webkit-scrollbar { display: none; }
+
+  .banner-slide {
+    flex: 0 0 100%;    /* WAJIB 100% di HP maupun Laptop */
+    width: 100%;
+    max-width: 100%;   /* Hapus batas 520px & 48% sebelumnya */
+    scroll-snap-align: start;
+    aspect-ratio: 12 / 5;
+    cursor: pointer;
+    background: #1e293b;
+  }
+
+  .banner-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Tombol navigasi panah & dots banner */
+  .banner-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .35);
+    background: rgba(15, 23, 42, .45);
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s;
+  }
+  .banner-nav:hover { background: rgba(15, 23, 42, .8); }
+  .banner-nav.prev { left: 12px; }
+  .banner-nav.next { right: 12px; }
+
+  @media (max-width: 767px) {
+    .banner-wrap { border-radius: 12px; margin-bottom: 22px; }
+    .banner-nav { display: none; } /* Di HP cukup swipe jari */
+  }
+
+  .banner-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 5;
+  }
+
+  .banner-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, .55);
+    border: none;
+    cursor: pointer;
+    transition: all .25s;
+  }
+  .banner-dot.active {
+    width: 24px;
+    background: var(--amber);
+  }
+
+  /* ===== SECTION & GRID BUKU RESPONSIF ===== */
+  .section-title {
+    font-size: 19px;
+    font-weight: 800;
+    margin: 24px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::before {
+    content: "";
+    width: 5px;
+    height: 22px;
+    background: var(--amber);
+    border-radius: 4px;
+  }
+
+  /* Grid rapi: 2 kolom di HP, 4-5 kolom di Laptop */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  @media (min-width: 640px) {
+    .grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  }
+  @media (min-width: 900px) {
+    .grid { grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  }
+  @media (min-width: 1100px) {
+    .grid { grid-template-columns: repeat(5, 1fr); gap: 18px; }
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--amber);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .07);
+  }
+
+  .card-cover {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    background: #e2e8f0;
+    overflow: hidden;
+  }
+
+  .card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Badge tidak terpotong di tepi kanan kartu */
+  .badge-cat {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    max-width: calc(100% - 16px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: rgba(15, 23, 42, .82);
+    backdrop-filter: blur(4px);
+    color: #fcd34d;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  .card-body {
+    padding: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-author {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid #f1f5f9;
+    padding-top: 8px;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .hidden { display: none !important; }
+</style>
     <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#f59e0b" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
