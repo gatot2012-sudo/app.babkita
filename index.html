@@ -231,32 +231,5 @@
   document.write('<scr' + 'ipt src="' + u + 'firebase-firestore-compat.js"></scr' + 'ipt>');
   document.write('<scr' + 'ipt src="' + u + 'firebase-auth-compat.js"></scr' + 'ipt>');
 </script>
-<script src="app.js"></script>
- <script>
-  function bagikanBuku() {
-    const params = new URLSearchParams(window.location.search);
-    // Mengecek ID buku dari variabel app.js atau URL
-    const idBuku = window.activeBookId || window.currentBookId || window.curBookId || (window.curBook && window.curBook.id) || params.get('id');
-
-    if (!idBuku) {
-      alert('ID buku belum terbaca. Silakan cek variabel di app.js.');
-      return;
-    }
-
-    const judul = document.getElementById('dTitle')?.innerText || 'Cerita di BabKita';
-    const urlShare = `https://babkita.com{idBuku}`;
-
-    if (navigator.share) {
-      navigator.share({
-        title: judul,
-        text: `Baca "${judul}" di BabKita:`,
-        url: urlShare
-      }).catch(console.error);
-    } else {
-      navigator.clipboard.writeText(urlShare);
-      alert('Link cerita berhasil disalin:\n' + urlShare);
-    }
-  }
-</script>
 </body>
 </html>
