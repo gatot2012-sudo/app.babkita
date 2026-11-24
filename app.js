@@ -585,5 +585,89 @@ function editorCommand(editorId, command) {
   editor.focus();
   document.execCommand(command, false, null);
 }
+/* ===== FUNGSI EDIT BAB NOVEL (KHUSUS PEMILIK) ===== */
 
+// 1. Membuka modal edit bab dan memuat isi teksnya
+function openEditChapter(idx) {
+  if (!currentUser || !curBook) {
+    alert("Silakan masuk dengan akun Google terlebih dahulu.");
+    return;
+  }
+
+  if (curBook.authorUid !== currentUser.uid) {
+    alert("Maaf, Anda bukan pemilik novel ini.");
+    return;
+  }
+
+  var chaps = getBookChapters(curBook);
+  var targetChap = chaps[idx];
+  if (!targetChap) return;
+
+  // Isi data bab ke form modal edit
+  document.getElementById("editChapIndex").value = idx;
+  document.getElementById("editChapTitle").value = targetChap.title || ("Bab " + (idx + 1));
+  document.getElementById("editChapContent").innerHTML = targetChap.content || "";
+
+  // Buka modal
+  openModal("editChapModal");
+}
+
+// 2. Menyimpan hasil editan bab ke Firebase Firestore
+function saveEditChapter(e) {
+  e.preventDefault();
+
+  if (!currentUser || !curBook) {
+    alert("Silakan masuk kembali.");
+    return;
+  }
+
+  if (curBook.authorUid !== currentUser.uid) {
+    alert("Anda tidak memiliki hak untuk mengubah bab ini.");
+    return;
+  }
+
+  var btn = document.getElementById("editChapSubmitBtn");
+  var idx = parseInt(document.getElementById("editChapIndex").value, 10);
+  var title = document.getElementById("editChapTitle").value.trim();
+  var editor = document.getElementById("editChapContent");
+  var rawText = editor.innerText.trim();
+  var contentHtml = sanitizeEditorHtml(editor.innerHTML.trim());
+
+  if (!title || !rawText) {
+    alert("Judul dan isi bab tidak boleh kosong.");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "Menyimpan Perubahan...";
+
+  var currentChaps = getBookChapters(curBook).slice();
+
+  // Update data bab pada nomor indeks yang dipilih
+  currentChaps[idx] = {
+    title: title,
+    content: contentHtml
+  };
+
+  // Jika yang diedit adalah Bab 1 (index 0), update juga excerpt ringkasan buku
+  var updateData = { chapterList: currentChaps };
+  if (idx === 0) {
+    updateData.excerpt = rawText.slice(0, 180) + "...";
+    updateData.content = contentHtml;
+  }
+
+  db.collection("books").doc(curBook.docId).update(updateData)
+    .then(function() {
+      btn.disabled = false;
+      btn.textContent = "Simpan Perubahan Bab";
+      closeModal("editChapModal");
+      alert("Bab berhasil diperbarui!");
+      renderChapterList(); // Refresh tampilan daftar bab
+    })
+    .catch(function(err) {
+      btn.disabled = false;
+      btn.textContent = "Simpan Perubahan Bab";
+      alert("Gagal mengupdate bab: " + err.message);
+    });
+}
 startApp();
