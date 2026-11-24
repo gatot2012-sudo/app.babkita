@@ -309,7 +309,7 @@ function formatParagraphs(text) {
   return text.split("\n").map(function(p) { return p.trim() ? "<p style='margin-bottom:14px;'>" + p + "</p>" : ""; }).join("");
 }
 
-
+var editingBookId = null;
 function addNewBook(e) {
   e.preventDefault();
 
