@@ -57,7 +57,40 @@ function updateAuthUI() {
     if (loggedInBox) loggedInBox.classList.add("hidden");
   }
 }
+function updateAuthUI() {
+  var btn = document.getElementById("authBtn");
+  var loggedOutBox = document.getElementById("loggedOutBox");
+  var loggedInBox = document.getElementById("loggedInBox");
+  var modalTitle = document.getElementById("authModalTitle");
+  var emailInfo = document.getElementById("userEmailInfo");
 
+  if (currentUser) {
+    var displayName = currentUser.displayName || currentUser.email.split("@")[0];
+    if (btn) btn.textContent = "Halo, " + displayName;
+    if (modalTitle) modalTitle.textContent = "Akun Penulis";
+    if (emailInfo) emailInfo.innerHTML = "Masuk sebagai <strong>" + displayName + "</strong><br><span style='font-size:12px;'>" + currentUser.email + "</span>";
+    if (loggedOutBox) loggedOutBox.classList.add("hidden");
+    if (loggedInBox) loggedInBox.classList.remove("hidden");
+  } else {
+    if (btn) btn.textContent = "Masuk / Daftar";
+    if (modalTitle) modalTitle.textContent = "Masuk ke BabKita";
+    if (loggedOutBox) loggedOutBox.classList.remove("hidden");
+    if (loggedInBox) loggedInBox.classList.add("hidden");
+  }
+
+  // TAMBAHAN INI: Refresh tombol edit jika sedang membuka halaman detail novel
+  if (curBook) {
+    var editBtn = document.getElementById("editBookBtn");
+    if (editBtn) {
+      if (currentUser && curBook.authorUid === currentUser.uid) {
+        editBtn.classList.remove("hidden");
+      } else {
+        editBtn.classList.add("hidden");
+      }
+    }
+    renderChapterList();
+  }
+}
 function loginWithGoogle() {
   var provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider)
