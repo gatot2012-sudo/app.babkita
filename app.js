@@ -208,6 +208,15 @@ function renderChapterList() {
 function openDetail(docId) {
   curBook = books.find(function(b) { return b.docId === docId; });
   if (!curBook) return;
+var editBtn = document.getElementById("editBookBtn");
+
+if (editBtn) {
+  if (currentUser && curBook.authorUid === currentUser.uid) {
+    editBtn.classList.remove("hidden");
+  } else {
+    editBtn.classList.add("hidden");
+  }
+}
   var newViews = (curBook.views || 0) + 1;
   db.collection("books").doc(docId).update({ views: newViews });
   var coverEl = document.getElementById("dCover");
