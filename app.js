@@ -191,19 +191,31 @@ function showView(v) {
   document.getElementById(v + "View").classList.remove("hidden");
   window.scrollTo(0, 0);
 }
-
 function renderChapterList() {
   var listEl = document.getElementById("chapterList");
   if (!listEl || !curBook) return;
   var chaps = getBookChapters(curBook);
   document.getElementById("dChaps").textContent = chaps.length;
+
+  // Cek apakah pengunjung adalah pemilik novel ini
+  var isOwner = currentUser && curBook.authorUid === currentUser.uid;
+
   listEl.innerHTML = chaps.map(function(ch, idx) {
+    // Tombol Edit Bab hanya dibuat jika pengunjung adalah pemilik sah novel
+    var btnEditBab = isOwner
+      ? '<button onclick="event.stopPropagation(); openEditChapter(' + idx + ');" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;border:1px solid #d97706;background:#fef3c7;color:#b45309;cursor:pointer;margin-right:8px;">✏️ Edit</button>'
+      : '';
+
     return '<div onclick="openReader(' + idx + ')" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;cursor:pointer;">' +
       '<span style="font-size:13px;font-weight:700;color:#1e293b;">' + (idx + 1) + '. ' + ch.title + '</span>' +
-      '<span style="font-size:11px;font-weight:700;color:#d97706;">Baca →</span>' +
+      '<div style="display:flex;align-items:center;">' +
+        btnEditBab +
+        '<span style="font-size:11px;font-weight:700;color:#d97706;">Baca →</span>' +
+      '</div>' +
     '</div>';
   }).join("");
 }
+
 
 function openDetail(docId) {
   curBook = books.find(function(b) { return b.docId === docId; });
