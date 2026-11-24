@@ -319,6 +319,8 @@ function formatParagraphs(text) {
 }
 
 var editingBookId = null;
+
+
 function startEditBook() {
   if (!currentUser || !curBook) {
     alert("Silakan masuk kembali.");
@@ -332,23 +334,19 @@ function startEditBook() {
 
   editingBookId = curBook.docId;
 
+  openModal("writeModal");
+
   document.getElementById("nTitle").value = curBook.title || "";
   document.getElementById("nCat").value = curBook.category || "";
   document.getElementById("nAuthor").value = curBook.author || "";
 
   var chapters = getBookChapters(curBook);
   var bab1 = chapters[0] || {};
-
   document.getElementById("nContent").innerHTML = bab1.content || "";
-
   document.getElementById("nSubmitBtn").textContent = "Simpan Perubahan";
-
-  openModal("writeModal");
 }
-
 function addNewBook(e) {
   e.preventDefault();
-
   if (!currentUser) {
     alert("Silakan masuk dengan Google terlebih dahulu.");
     return;
