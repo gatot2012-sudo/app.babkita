@@ -456,56 +456,6 @@ function addNewBook(e) {
     save("");
   }
 }
-
-
-
-  function save(coverData) {
-    db.collection("books").add({
-      title: title,
-      author: author,
-      authorUid: currentUser.uid,
-      authorEmail: currentUser.email,
-      category: cat,
-      views: 1,
-      chapters: 1,
-      subs: 0,
-      cover: coverData || "",
-      excerpt: rawText.slice(0, 180) + "...",
-      content: bab1Html,
-      chapterList: [{
-        title: "Bab 1",
-        content: bab1Html
-      }],
-      comments: [],
-      createdAt: Date.now()
-    })
-    .then(function() {
-      e.target.reset();
-      editor.innerHTML = "";
-      closeModal("writeModal");
-      btn.disabled = false;
-      btn.textContent = "Terbitkan Sekarang";
-      alert("Buku berhasil diterbitkan!");
-    })
-    .catch(function(err) {
-      btn.disabled = false;
-      btn.textContent = "Terbitkan Sekarang";
-      alert("Gagal: " + err.message);
-    });
-  }
-
-  var pickedFile =
-    fileInput && fileInput.files && fileInput.files.length
-      ? fileInput.files.item(0)
-      : null;
-
-  if (pickedFile) {
-    compressCover(pickedFile, save);
-  } else {
-    save("");
-  }
-}
-
 function sanitizeEditorHtml(html) {
   var box = document.createElement("div");
   box.innerHTML = html;
