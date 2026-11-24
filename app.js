@@ -310,6 +310,32 @@ function formatParagraphs(text) {
 }
 
 var editingBookId = null;
+function startEditBook() {
+  if (!currentUser || !curBook) {
+    alert("Silakan masuk kembali.");
+    return;
+  }
+
+  if (curBook.authorUid !== currentUser.uid) {
+    alert("Anda bukan pemilik novel ini.");
+    return;
+  }
+
+  editingBookId = curBook.docId;
+
+  document.getElementById("nTitle").value = curBook.title || "";
+  document.getElementById("nCat").value = curBook.category || "";
+  document.getElementById("nAuthor").value = curBook.author || "";
+
+  var chapters = getBookChapters(curBook);
+  var bab1 = chapters[0] || {};
+
+  document.getElementById("nContent").innerHTML = bab1.content || "";
+
+  document.getElementById("nSubmitBtn").textContent = "Simpan Perubahan";
+
+  openModal("writeModal");
+}
 function addNewBook(e) {
   e.preventDefault();
 
