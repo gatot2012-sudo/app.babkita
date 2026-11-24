@@ -803,6 +803,38 @@
       </form>
     </div>
   </div>
+<!-- MODAL: EDIT BAB YANG SUDAH TERBIT -->
+  <div id="editChapModal" class="modal hidden">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;margin-bottom:14px;">
+        <h3>Edit Bab Novel</h3>
+        <button onclick="closeModal('editChapModal')" style="border:none;background:none;font-size:18px;cursor:pointer;">X</button>
+      </div>
+      <form onsubmit="saveEditChapter(event)">
+        <!-- Hidden input untuk menampung index bab yang diedit -->
+        <input type="hidden" id="editChapIndex" />
+        <div class="form-group">
+          <label>Judul Bab</label>
+          <input type="text" id="editChapTitle" required />
+        </div>
+        <div class="form-group">
+          <label>Isi Cerita</label>
+          <div class="editor-toolbar">
+            <button type="button" onclick="editorCommand('editChapContent','bold')"><b>B</b></button>
+            <button type="button" onclick="editorCommand('editChapContent','italic')"><i>I</i></button>
+            <button type="button" onclick="editorCommand('editChapContent','underline')"><u>U</u></button>
+            <button type="button" onclick="editorCommand('editChapContent','justifyLeft')">Kiri</button>
+            <button type="button" onclick="editorCommand('editChapContent','justifyCenter')">Tengah</button>
+            <button type="button" onclick="editorCommand('editChapContent','justifyFull')">Rata</button>
+            <button type="button" onclick="editorCommand('editChapContent','undo')">↶</button>
+            <button type="button" onclick="editorCommand('editChapContent','redo')">↷</button>
+          </div>
+          <div id="editChapContent" class="writing-area" contenteditable="true" role="textbox" aria-multiline="true"></div>
+        </div>
+        <button type="submit" id="editChapSubmitBtn" class="btn btn-amber" style="width:100%;">Perbarui Bab</button>
+      </form>
+    </div>
+  </div>
   <div id="authModal" class="modal hidden">
     <div class="modal-box" style="text-align:center;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
@@ -824,7 +856,8 @@
       </div>
     </div>
   </div>
- <script>
+
+  <script>
   var u = "https" + "://www." + "gstatic" + ".com/firebasejs/10.12.2/";
   document.write('<scr' + 'ipt src="' + u + 'firebase-app-compat.js"></scr' + 'ipt>');
   document.write('<scr' + 'ipt src="' + u + 'firebase-firestore-compat.js"></scr' + 'ipt>');
