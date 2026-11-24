@@ -336,6 +336,7 @@ function startEditBook() {
 
   openModal("writeModal");
 }
+
 function addNewBook(e) {
   e.preventDefault();
 
@@ -343,9 +344,17 @@ function addNewBook(e) {
     alert("Silakan masuk dengan Google terlebih dahulu.");
     return;
   }
- var btn = e.target.querySelector("button[type='submit']");
+
+  var btn = document.getElementById("nSubmitBtn");
+  var isEditing = !!editingBookId;
+
+  if (isEditing && (!curBook || curBook.authorUid !== currentUser.uid)) {
+    alert("Anda tidak berhak mengedit novel ini.");
+    return;
+  }
+
   btn.disabled = true;
-  btn.textContent = "Menerbitkan...";
+  btn.textContent = isEditing ? "Menyimpan Perubahan..." : "Menerbitkan...";
 
   var title = document.getElementById("nTitle").value.trim();
   var cat = document.getElementById("nCat").value;
@@ -358,9 +367,90 @@ function addNewBook(e) {
   if (!rawText) {
     alert("Isi cerita Bab 1 belum ditulis.");
     btn.disabled = false;
-    btn.textContent = "Terbitkan Sekarang";
+    btn.textContent = isEditing ? "Simpan Perubahan" : "Terbitkan Sekarang";
     return;
   }
+
+  function save(coverData) {
+    var coverFinal = coverData || (isEditing ? curBook.cover : "");
+
+    if (isEditing) {
+      var chapters = getBookChapters(curBook).slice();
+
+      chapters[0] = {
+        title: chapters[0] ? chapters[0].title : "Bab 1",
+        content: bab1Html
+      };
+
+      db.collection("books").doc(editingBookId).update({
+        title: title,
+        author: author,
+        category: cat,
+        cover: coverFinal,
+        excerpt: rawText.slice(0, 180) + "...",
+        content: bab1Html,
+        chapterList: chapters
+      }).then(function() {
+        editingBookId = null;
+        e.target.reset();
+        editor.innerHTML = "";
+        closeModal("writeModal");
+        btn.disabled = false;
+        btn.textContent = "Terbitkan Sekarang";
+        alert("Perubahan novel berhasil disimpan!");
+      }).catch(function(err) {
+        btn.disabled = false;
+        btn.textContent = "Simpan Perubahan";
+        alert("Gagal mengedit: " + err.message);
+      });
+
+    } else {
+      db.collection("books").add({
+        title: title,
+        author: author,
+        authorUid: currentUser.uid,
+        authorEmail: currentUser.email,
+        category: cat,
+        views: 1,
+        chapters: 1,
+        subs: 0,
+        cover: coverFinal,
+        excerpt: rawText.slice(0, 180) + "...",
+        content: bab1Html,
+        chapterList: [{
+          title: "Bab 1",
+          content: bab1Html
+        }],
+        comments: [],
+        createdAt: Date.now()
+      }).then(function() {
+        e.target.reset();
+        editor.innerHTML = "";
+        closeModal("writeModal");
+        btn.disabled = false;
+        btn.textContent = "Terbitkan Sekarang";
+        alert("Buku berhasil diterbitkan!");
+      }).catch(function(err) {
+        btn.disabled = false;
+        btn.textContent = "Terbitkan Sekarang";
+        alert("Gagal: " + err.message);
+      });
+    }
+  }
+
+  var pickedFile =
+    fileInput && fileInput.files && fileInput.files.length
+      ? fileInput.files.item(0)
+      : null;
+
+  if (pickedFile) {
+    compressCover(pickedFile, save);
+  } else {
+    save("");
+  }
+}
+
+
 
   function save(coverData) {
     db.collection("books").add({
